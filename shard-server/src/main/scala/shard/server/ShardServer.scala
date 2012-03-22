@@ -26,7 +26,7 @@ trait Handler {
 /**
  * A URI based Router that will take a http method and the concrete URI of the request and find an appropriate Service to delegate to.
  */
-class Router2(val routes: List[Handler]) extends Service[HttpRequest, HttpResponse] {
+class Router(val routes: List[Handler]) extends Service[HttpRequest, HttpResponse] {
   
   val routeMap = routes map {r => ((r.method, r.uri), r.service) } toMap
 
@@ -38,24 +38,6 @@ class Router2(val routes: List[Handler]) extends Service[HttpRequest, HttpRespon
   def apply(request: HttpRequest) = {
     routeMap
       .getOrElse((request.getMethod(), request.getUri()), pageNotFoundService)
-      .apply(request)
-  }
-}
-
-/**
- * A URI based Router that will take a http method and the concrete URI of the request and find an appropriate Service to delegate to.
- */
-class Router(val routes: Map[HttpMethod, Map[String, Service[HttpRequest, HttpResponse]]]) extends Service[HttpRequest, HttpResponse] {
-
-  val pageNotFoundService = new Service[HttpRequest, HttpResponse]() {
-    val notFoundResponse = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND)
-    def apply(request: HttpRequest) = Future.value(notFoundResponse)
-  }
-
-  def apply(request: HttpRequest) = {
-    routes
-      .getOrElse(request.getMethod(), Map.empty[String, Service[HttpRequest, HttpResponse]])
-      .getOrElse(request.getUri(), pageNotFoundService)
       .apply(request)
   }
 }
@@ -81,12 +63,12 @@ object HttpServer {
     }
   }
 
-  def build(handler: Service[HttpRequest, HttpResponse]): Server =
+  def build(service: Service[HttpRequest, HttpResponse]): Server =
     ServerBuilder()
       .codec(Http())
       .bindTo(new InetSocketAddress(8080))
       .name("httpserver")
-      .build(new HandleExceptions andThen handler) /*andThen authorize*/
+      .build(new HandleExceptions andThen service) /*andThen authorize*/
 
   //  /**
   //   * A simple Filter that checks that the request is valid by inspecting the
