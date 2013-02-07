@@ -10,11 +10,11 @@ object SprayServer extends App {
 
   LoggerFactory.getLogger(getClass) // initialize SLF4J early
 
-  val mainModule = new HelloService {
+  val mainModule = new ShardService {
     // bake your module cake here
   }
 
-  val httpService = Actor.actorOf(new HttpService(mainModule.helloService))
+  val httpService = Actor.actorOf(new HttpService(mainModule.shardService))
   val rootService = Actor.actorOf(new SprayCanRootService(httpService))
   val sprayCanServer = Actor.actorOf(new HttpServer())
 

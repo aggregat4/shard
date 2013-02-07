@@ -1,11 +1,10 @@
 package shard.server
 import cc.spray.test.SprayTest
-import org.junit.Assert
 
 trait JunitSprayTest extends SprayTest {
-  class SprayTestException(message: String) extends RuntimeException(message)
+  class SprayTestException(message: String) extends RuntimeException(message: String)
   
-  def fail(msg: String) : Nothing = {
-    throw new SprayTestException(msg)
+  def fail(message: String) : Nothing = {
+    throw new SprayTestException(message) 
   }
 }
