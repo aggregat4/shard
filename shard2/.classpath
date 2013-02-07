@@ -1,0 +1,25 @@
+<classpath>
+  <classpathentry output="target/scala-2.10/classes" path="src/main/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.10/classes" path="src/main/java" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.10/test-classes" path="src/test/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.10/test-classes" path="src/test/java" kind="src"></classpathentry>
+  <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/ch.qos.logback/logback-classic/jars/logback-classic-1.0.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/ch.qos.logback/logback-core/jars/logback-core-1.0.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.eclipse.jetty/jetty-server/jars/jetty-server-9.0.0.M4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.eclipse.jetty/jetty-http/jars/jetty-http-9.0.0.M4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.eclipse.jetty/jetty-util/jars/jetty-util-9.0.0.M4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.eclipse.jetty/jetty-io/jars/jetty-io-9.0.0.M4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.eclipse.jetty/jetty-servlet/jars/jetty-servlet-9.0.0.M4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.eclipse.jetty/jetty-security/jars/jetty-security-9.0.0.M4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/javax.servlet/javax.servlet-api/jars/javax.servlet-api-3.0.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/junit/junit/jars/junit-4.10.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.hamcrest/hamcrest-core/jars/hamcrest-core-1.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.easytesting/fest-assert/jars/fest-assert-1.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.easytesting/fest-util/jars/fest-util-1.1.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/com.novocode/junit-interface/jars/junit-interface-0.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/boris/.ivy2/cache/org.scala-tools.testing/test-interface/jars/test-interface-0.5.jar" kind="lib"></classpathentry>
+  <classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="bin" kind="output"></classpathentry>
+</classpath>
