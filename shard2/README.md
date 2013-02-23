@@ -32,7 +32,7 @@ TODO: make this documentation self hosting, start a design wiki in src/test/reso
 - Remote Repositories
   - shard repositories can be synced with a remote master
     [how to handle merge conflicts? check out what git does with those]
-  
+
 # Shard Wiki design
 ## File and Directory Structure
 There are some possibilities with designing a wiki as a set of files and directories. Assuming there is a root directory with our repository then we can have 2 basic schemes (as far as I can see):
