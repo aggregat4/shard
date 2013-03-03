@@ -8,7 +8,7 @@ import Status._
 import a4.shard.routing.Response
 import a4.util.StreamUtil
 
-class ShardWikiServlet(val router: Router) extends HttpServlet {
+case class ShardWikiServlet(val router: Router) extends HttpServlet {
 
   override def doGet(req: HttpServletRequest, resp: HttpServletResponse) : Unit = {  
     val request = new ServletRequest(req)

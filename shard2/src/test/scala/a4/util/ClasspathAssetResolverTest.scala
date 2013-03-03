@@ -3,6 +3,7 @@ package a4.util
 import org.junit.Test
 import org.junit.Assert._
 import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class ClasspathAssetResolverTest {
 
@@ -10,12 +11,12 @@ class ClasspathAssetResolverTest {
  
   @Test(expected = classOf[IllegalArgumentException]) 
   def readNonExistingFile : Unit = 
-    resolver.getReader("nonexistingfile")
+    resolver.getInputStream("nonexistingfile")
   
   @Test def readExistingFileNakedBasePath : Unit =
-    assertEquals("Foo.", new BufferedReader(resolver.getReader("foo.bar")).readLine)
+    assertEquals("Foo.", new BufferedReader(new InputStreamReader(resolver.getInputStream("foo.bar"), "utf-8")).readLine)
   
   @Test def readExistingFileInSubdirectoryWithNakedBasePath : Unit =
-    assertEquals("Bar.", new BufferedReader(resolver.getReader("foo/bar")).readLine)
+    assertEquals("Bar.", new BufferedReader(new InputStreamReader(resolver.getInputStream("foo/bar"), "utf-8")).readLine)
   
 }

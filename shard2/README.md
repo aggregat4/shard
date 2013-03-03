@@ -36,8 +36,11 @@ TODO: make this documentation self hosting, start a design wiki in src/test/reso
 # Shard Wiki design
 ## File and Directory Structure
 There are some possibilities with designing a wiki as a set of files and directories. Assuming there is a root directory with our repository then we can have 2 basic schemes (as far as I can see):
-- In the first option each page is a file called "<filename>.shardwiki" and all the page's attachments and its children are stored in a subdirectory called "<filename>/"
-- In the other option, the directory itself contains both the page and its attachments, child-pages are modeled as subdirectories. So we would have a "shardwiki" file (explicitly no specific filename, this is the convention), all attachments are parallell to it and child pages are under "<childpage>/" directories.
+1. Each page is a file called "<filename>.shardwiki" and all the page's attachments and its children are stored in a subdirectory called "<filename>/"
+2. The directory itself contains both the page and its attachments, child-pages are modeled as subdirectories. So we would have a "shardwiki" file (explicitly no specific filename, this is the convention), all attachments are parallell to it and child pages are under "<childpage>/" directories.
+3. Each ".shard.md" file is a wiki page, they can be named whatever but need to end in ".shard.md", 
+   all binary files in a certain directory _can_ be attachments. Each directory can have an entry file called "shard.md" 
+   and when it exists it is used to render the directory itself. 
 
 I opt for the latter design. In both cases some thought needs to go into how we identify pages and refer to the from other pages. How to guarantee a unique name? I tend towards using the page's relative path in the hierarchy for this. This is naturally unique, but it is of course also subject to change. But since we need to deal with change anyhow with renames we need to implement replaces after renames.
 

@@ -1,7 +1,7 @@
 package a4.util
 
-import java.io.Reader
+import java.io.InputStream
 
 trait AssetResolver {
-  def getReader(relativePath: String) : Reader 
+  def getInputStream(relativePath: String) : InputStream 
 }

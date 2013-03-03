@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest
 import java.io.OutputStream
 import java.io.InputStream
 import java.io.ByteArrayInputStream
+import scala.util.matching.Regex.Match
+import scala.util.matching.Regex
 
 sealed trait Method
 case object GET extends Method
@@ -34,7 +36,15 @@ object Method {
 trait Request {
   def method: Method
   def pathUrl: String
-  def params: Map[String, List[String]]
+  def params: Map[String, List[String]]  
+  def withPathParams(urlParams: Map[String, List[String]]) : Request
+}
+
+object Request {
+  def getSingleParam(req: Request, name: String) : Option[String] = req.params.get(name) match {
+    case Some(list) if (! list.isEmpty) => Some(list(0))  
+    case _ => None
+  }
 }
 
 /**
@@ -43,14 +53,14 @@ trait Request {
  * the stuff in HttpServletRequest at the end but for now it seems weird leaving raw Java 
  * classes in the API.
  */
-class ServletRequest(val originalRequest: HttpServletRequest) extends Request {  
+class ServletRequest(val originalRequest: HttpServletRequest, val urlParams: Map[String, List[String]] = Map()) extends Request {  
   import collection.JavaConversions._
   implicit def convert(javaMap: java.util.Map[String, Array[String]]) = javaMap.entrySet.map(entry => (entry.getKey, entry.getValue.toList)).toMap
-  lazy val originalParameters : Map[String, List[String]] = originalRequest.getParameterMap()
   
+  lazy val params : Map[String, List[String]] = originalRequest.getParameterMap() ++ urlParams
   override def method = Method.from(originalRequest.getMethod())
-  override def pathUrl = originalRequest.getContextPath()
-  override def params = originalParameters
+  override def pathUrl = originalRequest.getPathInfo + (if (originalRequest.getQueryString == null) "" else "?" + originalRequest.getQueryString)
+  override def withPathParams(urlParams: Map[String, List[String]]) : Request = new ServletRequest(originalRequest, urlParams)
 }
 
 case class Status(val value: Int)
@@ -74,34 +84,60 @@ case class StringResponse(val status: Status, val stringBody: String) extends Re
   lazy val body = new ByteArrayInputStream(stringBody.getBytes("UTF-8"))
 }
 
-case class Route(val path: Path, val method: Method, val action: Action) {
-  // A simple first attempt, no variable support yet, static matching on URL path
-  def accepts(request: Request) = (request.pathUrl == path.path && request.method == method)
-  def service(request: Request) = action.apply(request)
+case class InputStreamResponse(val status: Status, val body: InputStream) extends Response
 
+
+case class Route(val path: Path, val method: Method, val action: Action) {
+  
+  def accepts(request: Request) : Boolean =
+    if (request.method == method) {
+      if (path.path.endsWith("**")) {
+        request.pathUrl.startsWith(path.path.substring(0, path.path.length - 2))
+      } else (request.pathUrl == path.path)
+    } else false
+
+  /**
+   *  If any variables were defined in the path of the URL itself we need to make sure 
+   *  to pass them on to the Request object so that the callee can use them.
+   */ 
+  def service(request: Request) = 
+    action.apply(request.withPathParams(
+      path.getVariables(request.pathUrl).toIterable.map( t => (t._1, List(t._2)) ).toMap 
+    ))
 }
+
 case class Path(val path: String) {
+  private val variableRegexPattern = "\\{([a-zA-Z]+)\\}" 
+  // Note that for the actual variable VALUEs we also match on forward slashes, this means that
+  // URL variables can also be path fragments, e.g. "foo/bar/baz" 
+  private val valueRegexPattern = "\\(([a-zA-Z/]+)\\)" 
+  private val variableRegex = variableRegexPattern.r
+  val variableNames = variableRegex.findAllIn(path).matchData.map(group => group.group(1)).toList
+  // ": _*" seems to be a way to convert a List to a varargs. magic. 
+  val pathMatcher = new Regex(path.replace("**", ".*").replaceAll(variableRegexPattern, valueRegexPattern), variableNames : _*)
+  
+  def matches(url: String) : Boolean = pathMatcher.findFirstIn(url) match {    
+  	case Some(urlMatch) => urlMatch.equals(url) // only full matches are matches
+    case None => false
+  } 
+    
+  def getVariables(url: String) : Map[String, String] = pathMatcher.findFirstMatchIn(url) match {
+    case Some(m) => variableNames.zip(m.subgroups).toMap
+    case _ => Map()
+  }
+  
   def routes(actions: (Method, Action)*) = actions.map { action: (Method, Action) => Route(this, action._1, action._2) }.toList
 }
 
 case class Router(val routes: List[Route]) {
   def findRoute(request: Request) = routes.find(r => r.accepts(request))
 }
-
-// ---- Some test classes and methods
-object SomeControllerLikeThing {
-  def doSomething(req: Request) = EmptyResponse(Ok)
-}
-
-class Foo {
-  def bar(req: Request) = EmptyResponse(NotFound)
-}
-
-object Router {
-  val routes =
-    Path("/").routes(
-      (GET, SomeControllerLikeThing.doSomething),
-      (POST, new Foo().bar)) :::
-    Path("/foo").routes(
-      (GET, SomeControllerLikeThing.doSomething))
-}
+//
+//object Router {
+//  val routes =
+//    Path("/").routes(
+//      (GET, SomeControllerLikeThing.doSomething),
+//      (POST, new Foo().bar)) :::
+//    Path("/foo").routes(
+//      (GET, SomeControllerLikeThing.doSomething))
+//}
