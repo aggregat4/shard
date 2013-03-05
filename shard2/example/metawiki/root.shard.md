@@ -1,3 +1,7 @@
+# Shard Example Wiki
+
 Root page of our example wiki.
 
-TODO: put a link here to the todo page
+Here's some content:
+
+* [Current Shard TODO List](/wiki/metawiki/page/todo)

@@ -13,7 +13,7 @@ TODO: make this documentation self hosting, start a design wiki in src/test/reso
 
 # What it is
 - a shard repository is a directory
-- a shard repository is a git repository
+- a shard repository is a git   repository
 - multiple repositories can be managed
 - shard-server watches the directory and subdirectories using jnotify and commits each change to git
 - files are edited on the hard drive directly, outside of shard
@@ -59,5 +59,6 @@ example of file based syntax:
 			shardwiki
 
 ## Configuration
-- shard server configuration is kept in application.conf HOCON notation based config file
+
+* shard server configuration is kept in application.conf HOCON notation based config file
 

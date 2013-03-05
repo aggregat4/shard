@@ -16,7 +16,12 @@ case class ShardWikiServlet(val router: Router) extends HttpServlet {
       case Some(r: Route) => r.service(request)
       case None => EmptyResponse(NotFound)
     }
-    resp.setStatus(response.status.value)
+    resp.setStatus(response.status.value)    
+    response.contentType match {
+      case Some(mediaType) => resp.setContentType(mediaType.toString)
+      case None => None
+    }
+    println("url: " + request.pathUrl + ", Content-Type: " + response.contentType)
     StreamUtil.copy(response.body, resp.getOutputStream)
   }
     

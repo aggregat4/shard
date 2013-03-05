@@ -93,9 +93,39 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+/* Kuler theme: https://kuler.adobe.com/#themeID/2270806 */
+
+body {
+	font-size: 14px;
+}
+
+header {
+	background: #776D53;
+	color: white;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+footer {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+}
+
+header {
+	border-bottom: 1px #776D53 solid;
+}
+
+footer {
+	position: absolute;
+	width: 100%;
+	bottom: 0px;
+}
 
 footer p {
+	line-height: 14px;
     font-size: 0.8em;
+    margin: 0;
 }
 
 ul.linklist {
@@ -109,15 +139,25 @@ ul.linklist li {
     margin: 0;
 }
 
-ul.linklist li a {
-    text-decoration: none;
-}
-
-ul.linklist li a:hover {    
+a {
     text-decoration: none;
 	border-bottom: 1px dotted #888;
 }
 
+a:hover {
+	text-decoration: none;    
+}
+
+header a {
+    font-weight: bold;
+    color: #F7CB61;
+    border-bottom: 1px dotted #C4A14D;
+}
+
+header a:hover {
+    color: white;
+    border-bottom: 1px dotted white;
+}
 
 
 /* ==========================================================================
@@ -269,7 +309,9 @@ ul.linklist li a:hover {
      */
 
     .ir a:after,
-    a[href^="javascript:"]:after,
+    a[href^This page produced by Shard Wiki.
+
+    ="javascript:"]:after,
     a[href^="#"]:after {
         content: "";
     }

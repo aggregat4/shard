@@ -16,6 +16,7 @@ import java.io.InputStream
 import java.io.ByteArrayInputStream
 import scala.util.matching.Regex.Match
 import scala.util.matching.Regex
+import com.google.common.net.MediaType
 
 sealed trait Method
 case object GET extends Method
@@ -74,27 +75,24 @@ object Status {
 trait Response {
   def status : Status
   def body : InputStream
+  def contentType : Option[MediaType]
 }
 
-case class EmptyResponse(val status: Status) extends Response {
+case class EmptyResponse(val status: Status, val contentType: Option[MediaType] = None) extends Response {
   lazy val body = new ByteArrayInputStream(Array[Byte]())
 }
 
-case class StringResponse(val status: Status, val stringBody: String) extends Response {
+case class StringResponse(val status: Status, val stringBody: String, val contentType: Option[MediaType] = None) extends Response {
   lazy val body = new ByteArrayInputStream(stringBody.getBytes("UTF-8"))
 }
 
-case class InputStreamResponse(val status: Status, val body: InputStream) extends Response
-
+case class InputStreamResponse(val status: Status, val body: InputStream, val contentType: Option[MediaType] = None) extends Response
 
 case class Route(val path: Path, val method: Method, val action: Action) {
   
   def accepts(request: Request) : Boolean =
-    if (request.method == method) {
-      if (path.path.endsWith("**")) {
-        request.pathUrl.startsWith(path.path.substring(0, path.path.length - 2))
-      } else (request.pathUrl == path.path)
-    } else false
+    if (request.method == method) path.matches(request.pathUrl)
+    else false
 
   /**
    *  If any variables were defined in the path of the URL itself we need to make sure 
@@ -110,7 +108,7 @@ case class Path(val path: String) {
   private val variableRegexPattern = "\\{([a-zA-Z]+)\\}" 
   // Note that for the actual variable VALUEs we also match on forward slashes, this means that
   // URL variables can also be path fragments, e.g. "foo/bar/baz" 
-  private val valueRegexPattern = "\\(([a-zA-Z/]+)\\)" 
+  private val valueRegexPattern = "([a-zA-Z/]+)" 
   private val variableRegex = variableRegexPattern.r
   val variableNames = variableRegex.findAllIn(path).matchData.map(group => group.group(1)).toList
   // ": _*" seems to be a way to convert a List to a varargs. magic. 
@@ -132,12 +130,3 @@ case class Path(val path: String) {
 case class Router(val routes: List[Route]) {
   def findRoute(request: Request) = routes.find(r => r.accepts(request))
 }
-//
-//object Router {
-//  val routes =
-//    Path("/").routes(
-//      (GET, SomeControllerLikeThing.doSomething),
-//      (POST, new Foo().bar)) :::
-//    Path("/foo").routes(
-//      (GET, SomeControllerLikeThing.doSomething))
-//}
