@@ -44,7 +44,11 @@ body {
  */
 
 hr {
-    display: block;
+    display: block;#body {
+   padding:10px;
+   padding-bottom:60px;   /* Height of the footer */
+}
+    
     height: 1px;
     border: 0;
     border-top: 1px solid #ccc;
@@ -94,9 +98,21 @@ textarea {
    ========================================================================== */
 
 /* Kuler theme: https://kuler.adobe.com/#themeID/2270806 */
+/* fixed bottom footer inspired by http://matthewjamestaylor.com/blog/keeping-footers-at-the-bottom-of-the-page */
+
+html, body {
+   margin: 0;
+   padding: 0;
+   height: 100%;
+}
 
 body {
-	font-size: 14px;
+	/* font-size: 14px; */
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
 }
 
 header {
@@ -104,28 +120,30 @@ header {
 	color: white;
 	padding-top: 10px;
 	padding-bottom: 10px;
-}
-
-footer {
-	padding-top: 10px;
-	padding-bottom: 10px;
-	text-align: center;
-}
-
-header {
 	border-bottom: 1px #776D53 solid;
+}
+
+article {
+	padding-bottom: 1.5rem;
 }
 
 footer {
 	position: absolute;
+	bottom: 0;
+	text-align: center;
 	width: 100%;
-	bottom: 0px;
+	height: 1.5rem;
+	line-height: 1.5rem;
+    margin: 0;
 }
 
 footer p {
-	line-height: 14px;
-    font-size: 0.8em;
-    margin: 0;
+    font-size: 0.8rem;
+}
+
+div#container {
+	position: relative;
+	min-height: 100%;
 }
 
 ul.linklist {

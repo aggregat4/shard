@@ -1,4 +1,4 @@
-TODO: make this documentation self hosting, start a design wiki in src/test/resources or something, can try out the 
+  TODO: make this documentation self hosting, start a design wiki in src/test/resources or something, can try out the 
 
 # Dependencies
 - -[Scalatest](http://www.scalatest.org/) and the [FunSuite](http://www.scalatest.org/getting_started_with_fun_suite)-
@@ -7,8 +7,10 @@ TODO: make this documentation self hosting, start a design wiki in src/test/reso
 - [JNotify](http://jnotify.sourceforge.net/)
 - -[Scalatra](https://github.com/scalatra/scalatra) (or rather Finagle?)-
 -- Using Spray
+--- nope, using home brew
 - -[Scalate Jade](http://scalate.fusesource.org/documentation/jade.html)-
 -- Using Scalate Moustache
+--- nope, using mustache-java
 - [TypeSafe Config](https://github.com/typesafehub/config)
 
 # What it is
@@ -61,4 +63,3 @@ example of file based syntax:
 ## Configuration
 
 * shard server configuration is kept in application.conf HOCON notation based config file
-
