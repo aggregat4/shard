@@ -36,12 +36,15 @@ case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRend
     case Some(wikiPage) if wikiPage.exists =>
       StringResponse(
           Ok, 
-          pageRenderer.render(PAGE_TEMPLATE, Map("pageTitle" -> wikiPage.wiki.name, "wikiPage" -> wikiPage, "pageContent" -> contentTransformer.transform(wikiPage))), 
+          pageRenderer.render(PAGE_TEMPLATE, Map(
+              "pageTitle" -> wikiPage.wiki.name, 
+              "wikiPage" -> wikiPage, 
+              "pageContent" -> contentTransformer.transform(wikiPage))), 
           Some(MediaType.HTML_UTF_8))
     case _ => EmptyResponse(NotFound) // TODO: make the 404 for wiki pages be a page where you can create a new page
   }
  
-   private def getAssetContentType(req: Request) : Option[MediaType] = 
+  private def getAssetContentType(req: Request) : Option[MediaType] = 
     if (req.pathUrl.startsWith("/css")) Some(MediaType.CSS_UTF_8)
     else if (req.pathUrl.startsWith("/js")) Some(MediaType.TEXT_JAVASCRIPT_UTF_8)
     else if (req.pathUrl.toLowerCase.endsWith(".jpg")) Some(MediaType.JPEG)

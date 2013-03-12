@@ -21,7 +21,7 @@ libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.8.9
 
 libraryDependencies += "com.typesafe" % "config" % "1.0.0"
 
-libraryDependencies += "eu.henkelmann" % "actuarius_2.10" % "0.2.4-bte"
+libraryDependencies += "eu.henkelmann" % "actuarius_2.10.0" % "0.2.5"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
