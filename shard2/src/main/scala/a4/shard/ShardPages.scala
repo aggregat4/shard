@@ -17,30 +17,45 @@ import com.google.common.net.MediaType
  * Kind of a controller, maycase _ =>  need more than one in the future.
  */
 case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRenderer, val assetResolver: AssetResolver, val contentTransformer: PageContentTransformer) {
-  private val ROOT_TEMPLATE = "root.mustache"
-  private val PAGE_TEMPLATE = "page.mustache"
-
+  private val rootPage = new RootPage(config.wikis)
+  
   def root(req: Request): Response =
-    StringResponse(Ok, pageRenderer.render(ROOT_TEMPLATE, Map("pageTitle" -> "Shard", "wikis" -> config.wikis)), Some(MediaType.HTML_UTF_8))
+    StringResponse(Ok, rootPage.render(pageRenderer), Some(MediaType.HTML_UTF_8))
 
-  private def getPage(req: Request): Option[WikiPage] =
+  private def toPath(components: List[String]) : String = components.reverse.mkString("/")
+
+  /**
+   * Each element in this list is a folder path, but we have the requirement to show the "default" page
+   * for a folder if there is one. The default page is a file with the same prefix as the folder name.
+   * E.g.: for /foo/ the default file is "/foo/foo".
+   */
+  private def determinePossiblePages(wiki: Wiki, components: List[String]) : List[WikiPage] =
+    if (components.isEmpty) List()
+    else 
+      List(new ConcretePage(wiki, toPath(List(components.head) ++ components), contentTransformer), new FolderPage(wiki, toPath(components)) ) ++ 
+      determinePossiblePages(wiki, components.tail)
+    
+  private def determinePage(wiki: Wiki, pageName: String) : Page = {
+    val nameComponents = pageName.split("/").toList.reverse  // reverse the path components to have the more specific one first
+    val folderRequested = pageName.endsWith("/") || nameComponents.isEmpty
+    val possiblePages = 
+      if (! folderRequested) 
+        List(new ConcretePage(wiki, nameComponents.head, contentTransformer)) ++ determinePossiblePages(wiki, nameComponents.tail)
+      else 
+        determinePossiblePages(wiki, nameComponents)
+    possiblePages.find(p => p.exists).getOrElse(rootPage)
+  }
+    
+  private def getPage(req: Request): Option[Page] =
     for {
       wikiName <- Request.getSingleParam(req, "wiki")
       wiki <- config.wikiById(wikiName)
-      pageName <- Request.getSingleParam(req, "page").orElse(Some("/root")) // default to the wiki root if no page was specified    
-    } yield WikiPage(wiki, pageName)
+      pageName <- Request.getSingleParam(req, "page").orElse(Some("/")) // default to the wiki root if no page was specified    
+    } yield determinePage(wiki, pageName)
 
   // TODO: do special handling for runtimeexceptions on processing the content? In case of non-transformable, just show the quoted/escaped raw source?
   def page(req: Request): Response = getPage(req) match {
-    // even if we can parse a wiki page from the URL that belongs to an actual wiki, it may not be an existing page
-    case Some(wikiPage) if wikiPage.exists =>
-      StringResponse(
-          Ok, 
-          pageRenderer.render(PAGE_TEMPLATE, Map(
-              "pageTitle" -> wikiPage.wiki.name, 
-              "wikiPage" -> wikiPage, 
-              "pageContent" -> contentTransformer.transform(wikiPage))), 
-          Some(MediaType.HTML_UTF_8))
+    case Some(page) => StringResponse(Ok, page.render(pageRenderer), Some(MediaType.HTML_UTF_8))
     case _ => EmptyResponse(NotFound) // TODO: make the 404 for wiki pages be a page where you can create a new page
   }
  

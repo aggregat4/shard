@@ -2,7 +2,6 @@ package a4.shard.transforming
 
 import a4.shard.WikiPage
 import eu.henkelmann.actuarius.ActuariusTransformer
-import a4.util.FileUtil
 import eu.henkelmann.actuarius.Decorator
 import eu.henkelmann.actuarius.Transformer
 
@@ -16,6 +15,6 @@ class DecoratingTransformer(val page: WikiPage) extends Transformer with Decorat
 }
 
 case class MarkdownTransformer extends PageContentTransformer { 
-  override def transform(page: WikiPage): String = 
-    new DecoratingTransformer(page)(FileUtil.readAsUtf8(page.pageFile)) // ActuariusTransformer is not threadsafe, therefore instantiating a new one each time    
+  override def transform(page: WikiPage, content: String): String = 
+    new DecoratingTransformer(page)(content) // ActuariusTransformer is not threadsafe, therefore instantiating a new one each time    
 }
