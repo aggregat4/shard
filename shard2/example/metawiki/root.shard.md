@@ -12,3 +12,4 @@ Here are some links:
 * [Current Shard TODO List (alternate link)](SELF:/page/todo)
 * [Current Shard TODO List (broken internal link)](seelf:/page/todo)
 * [The Google (external HTTP link)](http://www.google.com)
+* [Shard Wiki design thoughts](self:page/design)

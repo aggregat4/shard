@@ -12,7 +12,7 @@ class ClasspathAssetResolverTest {
   @Test(expected = classOf[IllegalArgumentException]) 
   def readNonExistingFile : Unit = 
     resolver.getInputStream("nonexistingfile")
-  
+
   @Test def readExistingFileNakedBasePath : Unit =
     assertEquals("Foo.", new BufferedReader(new InputStreamReader(resolver.getInputStream("foo.bar"), "utf-8")).readLine)
   

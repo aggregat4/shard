@@ -12,7 +12,7 @@ class DecoratingTransformer(val page: WikiPage) extends Transformer with Decorat
   private def replaceWikiRoot(link: String) : String = link.replaceFirst("(self|SELF):/?", page.wiki.urlPath + "/")
   
   override def decorateLink(text: String, url: String, title: Option[String]): String = 
-    replaceWikiRoot(super.decorateLink(text, url, title))  
+    replaceWikiRoot(super.decorateLink(text, url, title))
 }
 
 case class MarkdownTransformer extends PageContentTransformer { 
