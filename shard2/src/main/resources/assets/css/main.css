@@ -179,6 +179,25 @@ header a:hover {
     border-bottom: 1px dotted white;
 }
 
+nav .contextButton {
+  display: relative;
+  font-weight: bold;
+}
+
+nav .contextPopup {
+  display: none;
+  position: absolute;
+  background: #574D33;
+  padding: 15px;
+}
+
+nav .contextButton:hover {
+}
+
+nav .contextButton:hover .contextPopup {
+  display: block;
+}
+
 
 /* ==========================================================================
    Helper classes

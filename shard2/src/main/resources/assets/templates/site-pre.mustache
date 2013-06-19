@@ -6,25 +6,52 @@
     <title>{{pageTitle}}</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
     <!-- link rel="stylesheet" href="/css/normalize.css" -->
 	<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="/css/main.css">
+    <link href="/css/main.css" rel="stylesheet">
     <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body>
-    <!--[if lt IE 9]>
-        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-    <![endif]-->
 	<div id="container">	
 	<header>
 		<nav>
 			<div class="row">
 			    <div class="span2"></div>
-			    <div class="span8">
-			        <a href="/">home</a>{{#wikiPage}} | <a href="/wiki/{{wiki.id}}">{{wiki.name}}</a>{{/wikiPage}} 
+			    <div class="span6">
+			        <a href="/">home</a>{{#wikiPage}} | <a href="/wiki/{{wiki.id}}">{{wiki.name}}</a>{{/wikiPage}}
+			    </div>
+			    <div class="span2">	
+			    	{{#context}}
+			    		<div class="contextButton">
+			    			Context
+				    	 	<div class="row contextPopup">
+							    <div class="span3">
+							    	<h3>Pages</h3>
+							    	<ul class="pageslist">
+							    		{{#context.pages}}
+							    			<li><a href="{{url}}">{{name}}</a>
+							    		{{/context.pages}}
+							    	</ul>
+							    </div>
+							    <div class="span3">
+							    	<h3>Files</h3>
+							    	<ul class="filelist">
+							    		{{#context.files}}
+							    			<li><a href="{{url}}">{{name}}</a>
+							    		{{/context.files}}
+							    	</ul>
+							    </div>
+							    <div class="span3">
+							    	<h3>Folders</h3>
+							    	<ul class="folderlist">
+							    		{{#context.folders}}
+							    			<li><a href="{{url}}/">{{name}}/</a>
+							    		{{/context.folders}}
+							    	</ul>
+							    </div>
+							</div>			    	
+			    		</div>			    		
+			    	{{/context}}
 			    </div>
 			    <div class="span2"></div>
 			</div>

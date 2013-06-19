@@ -32,18 +32,28 @@ case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRend
   private def determinePossiblePages(wiki: Wiki, components: List[String]) : List[WikiPage] =
     if (components.isEmpty) List()
     else 
-      List(new ConcretePage(wiki, toPath(List(components.head) ++ components), contentTransformer), new FolderPage(wiki, toPath(components)) ) ++ 
+      List(
+          new ConcretePage(wiki, toPath(List(components.head) ++ components), contentTransformer), // for each folder, try the folder's name as a page 
+          new FolderPage(wiki, toPath(components), contentTransformer)
+      ) ++ // and try the folder itself of course 
       determinePossiblePages(wiki, components.tail)
     
   private def determinePage(wiki: Wiki, pageName: String) : Page = {
     val nameComponents = pageName.split("/").toList.reverse  // reverse the path components to have the more specific one first
     val folderRequested = pageName.endsWith("/") || nameComponents.isEmpty
     val possiblePages = 
-      if (! folderRequested) 
-        List(new ConcretePage(wiki, nameComponents.head, contentTransformer)) ++ determinePossiblePages(wiki, nameComponents.tail)
-      else 
-        determinePossiblePages(wiki, nameComponents)
-    possiblePages.find(p => p.exists).getOrElse(rootPage)
+      (if (! folderRequested) List(new ConcretePage(wiki, pageName, contentTransformer)) else List()) ++ // if the user requested an actual page, let's try to resolve it as a page, otherwise start the folder based fallback logic 
+      determinePossiblePages(wiki, nameComponents) ++ 
+      List(
+          new ConcretePage(wiki, "root", contentTransformer), // second to last fallback: by convention if nothing could be resolved, we see if there is a page called "root" in the root directory of the wiki 
+          new FolderPage(wiki, "/", contentTransformer)
+      ) // and finally, finally (and this should always work) we just show the folder page for the root of this wiki
+    val foundPage = possiblePages.find(p => p.exists)
+    // if no page was found, with fallback, render the folder page for the root of the wiki
+    foundPage match {
+      case Some(p) => p
+      case None => new FolderPage(wiki, "/", contentTransformer)
+    }
   }
     
   private def getPage(req: Request): Option[Page] =
@@ -56,7 +66,7 @@ case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRend
   // TODO: do special handling for runtimeexceptions on processing the content? In case of non-transformable, just show the quoted/escaped raw source?
   def page(req: Request): Response = getPage(req) match {
     case Some(page) => StringResponse(Ok, page.render(pageRenderer), Some(MediaType.HTML_UTF_8))
-    case _ => EmptyResponse(NotFound) // TODO: make the 404 for wiki pages be a page where you can create a new page
+    case _ => EmptyResponse(NotFound) // TODO: this not found can only mean that we can't find the actual WIKI, all other cases should theoretically be handled by the fallback logic in getPage(), so this means that in this case we should default to the root of all Wikis and show a flash message that we didn't find the wiki (possibly offer to create it?
   }
  
   private def getAssetContentType(req: Request) : Option[MediaType] = 

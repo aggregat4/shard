@@ -23,7 +23,8 @@ object ShardServer {
   def shardRouter(pages: ShardPages) : Router = 
     Router(
       Path("/").routes((GET, pages.root)) :::
-      Path("/wiki/{wiki}/page/{page}").routes((GET, pages.page)) :::
+	  Path("/wiki/{wiki}/page/{page}").routes((GET, pages.page)) :::
+      Path("/wiki/{wiki}/page/").routes((GET, pages.page)) :::
       Path("/wiki/{wiki}").routes((GET, pages.page)) :::
       Path("/css/**").routes((GET, pages.classpathAsset)) :::
       Path("/js/**").routes((GET, pages.classpathAsset)) :::
