@@ -1,0 +1,36 @@
+{{> site-pre}}
+
+<article class="folderContent">
+
+<div class="row">
+    <div class="span2"></div>
+    <div class="span3">
+    	<h2>Pages</h2>
+    	<ul class="pageslist">
+    		{{#pages}}
+    			<li><a href="{{url}}">{{url}}</a>
+    		{{/pages}}
+    	</ul>
+    </div>
+    <div class="span3">
+    	<h2>Files</h2>
+    	<ul class="filelist">
+    		{{#files}}
+    			<li><a href="{{url}}">{{url}}</a>
+    		{{/files}}
+    	</ul>
+    </div>
+    <div class="span3">
+    	<h2>Folders</h2>
+    	<ul class="folderlist">
+    		{{#folders}}
+    			<li><a href="{{url}}/">{{url}}/</a>
+    		{{/folders}}
+    	</ul>
+    </div>
+    <div class="span1"></div>
+</div>
+
+</article>
+
+{{> site-post}}
