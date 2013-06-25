@@ -21,20 +21,32 @@ trait Content {
   def wiki : Wiki
   def relativeUrl : String
   def name : String
+  def file : File
   def exists : Boolean // don't like this here
-  def parent : Option[Content]
+  def parent : Content
 }
 
-case class Folder(val wiki: Wiki, val folderUrl: String) extends Content {
-  private val folderFile = new File(wiki.location, folderUrl)
-  private def isRoot = folderUrl == "/"
-  override def relativeUrl : String = wiki.urlPath + folderUrl
-  override def name : String = if (isRoot) folderUrl else PathUtil.name(folderUrl) 
-  override def exists : Boolean = folderFile.exists && folderFile.isDirectory
-  override def parent : Option[Folder] = if (isRoot) None else Some(new Folder(wiki, PathUtil.parent(folderUrl))) 
+case class Root(val wiki: Wiki) extends Content {
+  override def relativeUrl : String = ""
+  override def name : String = ""
+  override def file : File = new File(wiki.location)
+  override def exists : Boolean = file.exists && file.isDirectory
+  override def parent : Content = this // not sure about this, seems to clever, what else though? if I return Option then I need special casing in subclasses
+}
+
+case class Folder(val wiki: Wiki, val name: String, val parent: Option[Folder]) extends Content {
+  override def file : File = parent match {
+    case Some(folder) => new File(folder.file, name)
+    case None => new File(wiki.location)
+  }
+  override def relativeUrl : String = parent match {
+    case Some(folder) => folder.relativeUrl
+    case None => wiki.urlPath
+  }
+  override def exists : Boolean = file.exists && file.isDirectory
   
   def pages : List[Page] = 
-    folderFile
+    file
   		.listFiles
   		.filter(f => f.isFile && f.getName.endsWith(".shard.md"))
   		.map(f => new Page(wiki, PathUtil.toConcretePath(folderUrl, f.getName.substring(0, f.getName.length - ".shard.md".length))))
@@ -56,9 +68,9 @@ case class Folder(val wiki: Wiki, val folderUrl: String) extends Content {
     .toList
 }
 
-case class Page(val wiki: Wiki, val pageUrl: String) extends Content {
+case class Page(val wiki: Wiki, val name: String, val parent: Option[Folder]) extends Content {
   private val pageSuffix = ".shard.md"
-  private val pageFile = new File(wiki.location, pageUrl + pageSuffix)
+  private val file = new File(wiki.location, pageUrl + pageSuffix)
   
   override def relativeUrl : String = wiki.urlPath + pageUrl
   override def name : String = PathUtil.name(pageUrl) 
