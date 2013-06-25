@@ -1,11 +1,11 @@
 package a4.shard.transforming
 
-import a4.shard.WikiPage
+import a4.shard.Page
 import eu.henkelmann.actuarius.ActuariusTransformer
 import eu.henkelmann.actuarius.Decorator
 import eu.henkelmann.actuarius.Transformer
 
-class DecoratingTransformer(val page: WikiPage) extends Transformer with Decorator {
+class DecoratingTransformer(val page: Page) extends Transformer with Decorator {
   override def deco() = this
 
   private def replaceWikiRoot(link: String) : String = link.replaceFirst("(self|SELF):/?", page.wiki.urlPath + "/")
@@ -15,6 +15,6 @@ class DecoratingTransformer(val page: WikiPage) extends Transformer with Decorat
 }
 
 case class MarkdownTransformer extends PageContentTransformer { 
-  override def transform(page: WikiPage, content: String): String = 
+  override def transform(page: Page, content: String): String = 
     new DecoratingTransformer(page)(content) // ActuariusTransformer is not threadsafe, therefore instantiating a new one each time    
 }

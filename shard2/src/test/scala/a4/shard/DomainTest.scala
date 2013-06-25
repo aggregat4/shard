@@ -6,6 +6,8 @@ import org.junit.Assert._
 class DomainTest {
 
   @Test
-  def nameForConcretePage() : Unit = 
+  def nameForConcretePage() : Unit = {
+    
+  }
 
 }

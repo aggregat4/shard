@@ -29,7 +29,7 @@ case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRend
    * for a folder if there is one. The default page is a file with the same prefix as the folder name.
    * E.g.: for /foo/ the default file is "/foo/foo".
    */
-  private def determinePossiblePages(wiki: Wiki, components: List[String]) : List[WikiPage] =
+  private def determinePossiblePages(wiki: Wiki, components: List[String]) : List[Page] =
     if (components.isEmpty) List()
     else 
       List(

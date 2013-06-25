@@ -1,7 +1,7 @@
 package a4.shard.transforming
 
-import a4.shard.WikiPage
+import a4.shard.Page
 
 trait PageContentTransformer {
-  def transform(page: WikiPage, content: String) : String
+  def transform(page: Page, content: String) : String
 }
