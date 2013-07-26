@@ -13,4 +13,7 @@ object PathUtil {
   def toFolderPath(folder: String, childFolder: String) : String = makeFolderString(folder) + makeFolderString(childFolder)
   
   def name(path: String) = path.split("/").reverse.head
+  
+  // Consider more aggressive string cleaning (just collapsing slashes for example)
+  def isEmpty(path: String) : Boolean = path.trim() == "" || path.trim() == "/"
 }

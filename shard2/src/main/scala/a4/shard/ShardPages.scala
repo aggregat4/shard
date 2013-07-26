@@ -14,7 +14,10 @@ import a4.shard.transforming.PageContentTransformer
 import com.google.common.net.MediaType
 
 /**
- * Kind of a controller, maycase _ =>  need more than one in the future.
+ * Kind of a controller, may need more than one in the future.
+ * 
+ * TODO:
+ * - pull through the Content refactoring here as well: specifically I need a way to generate the parent-chain of Folders for all the candidate pages that I create in determining possible pages for a given URL
  */
 case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRenderer, val assetResolver: AssetResolver, val contentTransformer: PageContentTransformer) {
   private val rootPage = new RootPage(config.wikis)
@@ -38,25 +41,27 @@ case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRend
       ) ++ // and try the folder itself of course 
       determinePossiblePages(wiki, components.tail)
     
-  private def determinePage(wiki: Wiki, pageName: String) : Page = {
+  private def determinePage(wiki: Wiki, pageName: String) : Content = {
     val nameComponents = pageName.split("/").toList.reverse  // reverse the path components to have the more specific one first
     val folderRequested = pageName.endsWith("/") || nameComponents.isEmpty
-    val possiblePages = 
-      (if (! folderRequested) List(new ConcretePage(wiki, pageName, contentTransformer)) else List()) ++ // if the user requested an actual page, let's try to resolve it as a page, otherwise start the folder based fallback logic 
-      determinePossiblePages(wiki, nameComponents) ++ 
-      List(
-          new ConcretePage(wiki, "root", contentTransformer), // second to last fallback: by convention if nothing could be resolved, we see if there is a page called "root" in the root directory of the wiki 
-          new FolderPage(wiki, "/", contentTransformer)
-      ) // and finally, finally (and this should always work) we just show the folder page for the root of this wiki
-    val foundPage = possiblePages.find(p => p.exists)
-    // if no page was found, with fallback, render the folder page for the root of the wiki
-    foundPage match {
-      case Some(p) => p
-      case None => new FolderPage(wiki, "/", contentTransformer)
+    if (folderRequested) {
+      
     }
+//    val possiblePages = 
+//      (if (! folderRequested) List(new Page(wiki, pageName)) else List()) ++ // if the user requested an actual page, let's try to resolve it as a page, otherwise start the folder based fallback logic 
+//      determinePossiblePages(wiki, nameComponents) ++ 
+//      // second to last fallback: by convention if nothing could be resolved, we see if there is a page called "root" in the root directory of the wiki
+//      List(new ConcretePage(wiki, "root", contentTransformer)) 
+//    // and finally, finally (and this should always work) we just show the folder page for the root of this wiki
+//    possiblePages.find(p => p.exists).getOrElse(Root(wiki))
+////    // if no page was found, with fallback, render the folder page for the root of the wiki
+////    foundPage match {
+////      case Some(p) => p
+////      case None => new FolderPage(wiki, "/", contentTransformer)
+////    }
   }
     
-  private def getPage(req: Request): Option[Page] =
+  private def getPage(req: Request): Option[Content] =
     for {
       wikiName <- Request.getSingleParam(req, "wiki")
       wiki <- config.wikiById(wikiName)
