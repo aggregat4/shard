@@ -44,9 +44,7 @@ case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRend
   private def determinePage(wiki: Wiki, pageName: String) : Content = {
     val nameComponents = pageName.split("/").toList.reverse  // reverse the path components to have the more specific one first
     val folderRequested = pageName.endsWith("/") || nameComponents.isEmpty
-    if (folderRequested) {
-      
-    }
+    val candidate = if (folderRequested) new Folder()
 //    val possiblePages = 
 //      (if (! folderRequested) List(new Page(wiki, pageName)) else List()) ++ // if the user requested an actual page, let's try to resolve it as a page, otherwise start the folder based fallback logic 
 //      determinePossiblePages(wiki, nameComponents) ++ 

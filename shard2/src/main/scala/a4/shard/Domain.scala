@@ -11,10 +11,19 @@ case class Wiki(val id: String, val name: String, val location: File) {
 }
 
 /**
- * New idea: have a ContentHypothesis class taking a wiki and a relative path. It has a method test() that returns Either a Content or an Error (look Either up).
- * This class has the logic for mapping a relative URL to an actual object. The Content subclasses then become simpler since they would take a wiki and a 
+ * TODO New idea: have a ContentHypothesis class taking a wiki and a relative path. 
+ * It has a method test() that returns Either a Content or an Error (look Either up).
+ * This class has the logic for mapping a relative URL to an actual object. The Content 
+ * subclasses then become simpler since they would take a wiki and a 
  * File object as input and would assume that they are valid.
  */
+
+object Content {
+  def isRoot(name: String) = PathUtil.isEmpty(name.trim) || name.trim == "/"
+  def toContent(wiki: Wiki, name: String) : Content = {
+    if (isRoot(name)) Folder(wiki)
+  }
+}
 
 trait Content {
   def wiki : Wiki
@@ -22,8 +31,7 @@ trait Content {
   def relativeUrl : String
   def name : String
   def file : File
-  def exists : Boolean
-  def isRoot = PathUtil.isEmpty(name)
+//  def exists : Boolean  
 }
 
 //case class Root(val wiki: Wiki) extends Content {
@@ -34,17 +42,16 @@ trait Content {
 //  override def exists : Boolean = true
 //}
 
-case class Folder(val wiki: Wiki, val name: String) extends Content {
-  override def parent : Content = if (isRoot) this else Folder(wiki, PathUtil.parent(name)) 
+case class Folder(val wiki: Wiki, val file: File) extends Content {
+  override def parent : Content = if (file.equals(wiki.location)) this else Folder(wiki, file.getParentFile()) 
   override def relativeUrl : String = name + "/"
-  override def file : File = if (isRoot) wiki.location else new File(wiki.location, name)
-  override def exists : Boolean = file.exists && file.isDirectory
+//  override def exists : Boolean = file.exists && file.isDirectory
   
   private def filterFiles[T <: Content](ctor: File => T) : List[T] = file.listFiles.map(ctor).filter(_.exists).toList
     
-  def pages : List[Page] 			 = filterFiles[Page](f => new Page(wiki, f.getName)) 
-  def attachments : List[Attachment] = filterFiles[Attachment](f => new Attachment(wiki, f.getName))  
-  def folders : List[Folder] 		 = filterFiles[Folder](f => new Folder(wiki, f.getName)) 
+  def pages : List[Page] 			 = filterFiles[Page](f => new Page(wiki, f)) 
+  def attachments : List[Attachment] = filterFiles[Attachment](f => new Attachment(wiki, f))  
+  def folders : List[Folder] 		 = filterFiles[Folder](f => new Folder(wiki, f)) 
 }
 
 case class Page(val wiki: Wiki, val name: String) extends Content {
@@ -55,7 +62,7 @@ case class Page(val wiki: Wiki, val name: String) extends Content {
   override def parent : Content = Folder(wiki, PathUtil.parent(name))
   override def relativeUrl : String = shortName
   override def file : File = if (isRoot) wiki.location else new File(wiki.location, fullName)
-  override def exists : Boolean = file.exists && file.isFile 
+//  override def exists : Boolean = file.exists && file.isFile 
 //
 //  def content : String = FileUtil.readAsUtf8(file)
 }
@@ -64,7 +71,7 @@ case class Attachment(val wiki: Wiki, val name: String) extends Content {
   override def parent : Content = Folder(wiki, PathUtil.parent(name))
   override def relativeUrl : String = name
   override def file : File = if (isRoot) wiki.location else new File(wiki.location, name)
-  override def exists : Boolean = file.exists && file.isFile 
+//  override def exists : Boolean = file.exists && file.isFile 
 }
 
 //case class RootPage(val wikis: List[Wiki]) {
