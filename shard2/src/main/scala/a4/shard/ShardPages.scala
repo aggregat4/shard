@@ -20,10 +20,11 @@ import com.google.common.net.MediaType
  * - pull through the Content refactoring here as well: specifically I need a way to generate the parent-chain of Folders for all the candidate pages that I create in determining possible pages for a given URL
  */
 case class ShardPages(val config: ShardConfiguration, val pageRenderer: PageRenderer, val assetResolver: AssetResolver, val contentTransformer: PageContentTransformer) {
-  private val rootPage = new RootPage(config.wikis)
+  
+  private val rootPageFile = "assets/templates/root.mustache"
   
   def root(req: Request): Response =
-    StringResponse(Ok, rootPage.render(pageRenderer), Some(MediaType.HTML_UTF_8))
+    StringResponse(Ok, pageRenderer.render(assetResolver.getInputStream(rootPageFile), Map("wikis" -> config.wikis)), Some(MediaType.HTML_UTF_8))
 
   private def toPath(components: List[String]) : String = components.reverse.mkString("/")
 

@@ -6,6 +6,9 @@ import a4.util.AssetResolver
 import java.io.StringWriter
 import com.github.mustachejava.NonCachingMustacheFactory
 import com.github.mustachejava.MustacheFactory
+import org.apache.commons.io.FileUtils
+import a4.util.StreamUtil
+import java.io.InputStream
 
 case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
   //lazy val mf = new NonCachingMustacheFactory(basePath)
@@ -36,4 +39,9 @@ case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
     mustache.execute(sw, toJavaMap(context))
     sw.toString
   }
+
+  override def render(template: InputStream, context: Map[String, AnyRef]) : String = {
+    render(StreamUtil.toString(template, "UTF-8"), context)
+  }
+
 }
