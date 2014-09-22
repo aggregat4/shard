@@ -7,16 +7,12 @@
  */
 package a4.shard.routing
 
-import a4.shard.routing._
-import Status._
-import Stream._
+import java.io.{ByteArrayInputStream, InputStream}
 import javax.servlet.http.HttpServletRequest
-import java.io.OutputStream
-import java.io.InputStream
-import java.io.ByteArrayInputStream
-import scala.util.matching.Regex.Match
-import scala.util.matching.Regex
+
 import com.google.common.net.MediaType
+
+import scala.util.matching.Regex
 
 sealed trait Method
 case object GET extends Method
@@ -43,7 +39,7 @@ trait Request {
 
 object Request {
   def getSingleParam(req: Request, name: String) : Option[String] = req.params.get(name) match {
-    case Some(list) if (! list.isEmpty) => Some(list(0))  
+    case Some(list) if list.nonEmpty => Some(list(0))
     case _ => None
   }
 }
@@ -55,7 +51,7 @@ object Request {
  * classes in the API.
  */
 class ServletRequest(val originalRequest: HttpServletRequest, val urlParams: Map[String, List[String]] = Map()) extends Request {  
-  import collection.JavaConversions._
+  import scala.collection.JavaConversions._
   implicit def convert(javaMap: java.util.Map[String, Array[String]]) = javaMap.entrySet.map(entry => (entry.getKey, entry.getValue.toList)).toMap
   
   lazy val params : Map[String, List[String]] = originalRequest.getParameterMap() ++ urlParams
@@ -90,9 +86,7 @@ case class InputStreamResponse(val status: Status, val body: InputStream, val co
 
 case class Route(val path: Path, val method: Method, val action: Action) {
   
-  def accepts(request: Request) : Boolean =
-    if (request.method == method) path.matches(request.pathUrl)
-    else false
+  def accepts(request: Request) : Boolean = request.method == method && path.matches(request.pathUrl)
 
   /**
    *  If any variables were defined in the path of the URL itself we need to make sure 
@@ -106,12 +100,12 @@ case class Route(val path: Path, val method: Method, val action: Action) {
 
 case class Path(val path: String) {
   private val variableRegexPattern = "\\{([a-zA-Z]+)\\}" 
-  // Note that for the actual variable VALUEs we also match on forward slashes, this means that
+  // Note that for the actual variable *values* we also match on forward slashes, this means that
   // URL variables can also be path fragments, e.g. "foo/bar/baz" 
   private val valueRegexPattern = "([a-zA-Z/]+)" 
   private val variableRegex = variableRegexPattern.r
   val variableNames = variableRegex.findAllIn(path).matchData.map(group => group.group(1)).toList
-  // ": _*" seems to be a way to convert a List to a varargs. magic. 
+  // ": _*" seems to be a way to convert a List to a varargs. Magic. Fucking scala.
   val pathMatcher = new Regex(path.replace("**", ".*").replaceAll(variableRegexPattern, valueRegexPattern), variableNames : _*)
   
   def matches(url: String) : Boolean = pathMatcher.findFirstIn(url) match {    
@@ -124,7 +118,8 @@ case class Path(val path: String) {
     case _ => Map()
   }
   
-  def routes(actions: (Method, Action)*) = actions.map { action: (Method, Action) => Route(this, action._1, action._2) }.toList
+  // this is like a factory method, should be on the object?
+  def routes(actions: (Method, Action)*) : List[Route] = actions.map { action: (Method, Action) => Route(this, action._1, action._2) }.toList
 }
 
 case class Router(val routes: List[Route]) {

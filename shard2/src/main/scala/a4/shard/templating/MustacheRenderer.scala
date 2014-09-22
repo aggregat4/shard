@@ -1,14 +1,9 @@
 package a4.shard.templating
 
-import com.github.mustachejava.DefaultMustacheFactory
-import java.io.Writer
-import a4.util.AssetResolver
-import java.io.StringWriter
-import com.github.mustachejava.NonCachingMustacheFactory
-import com.github.mustachejava.MustacheFactory
-import org.apache.commons.io.FileUtils
+import java.io.{InputStream, StringWriter}
+
 import a4.util.StreamUtil
-import java.io.InputStream
+import com.github.mustachejava.MustacheFactory
 
 case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
   //lazy val mf = new NonCachingMustacheFactory(basePath)
@@ -33,15 +28,15 @@ case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
     return map
   } 
   
-  override def render(template: String, context: Map[String, AnyRef] = Map[String, AnyRef]()) : String = {
+  override def renderString(template: String, context: Map[String, AnyRef] = Map[String, AnyRef]()) : String = {
     val mustache = mf.compile(template)
     val sw = new StringWriter
     mustache.execute(sw, toJavaMap(context))
     sw.toString
   }
 
-  override def render(template: InputStream, context: Map[String, AnyRef]) : String = {
-    render(StreamUtil.toString(template, "UTF-8"), context)
+  override def renderStream(template: InputStream, context: Map[String, AnyRef]) : String = {
+    renderString(StreamUtil.toString(template, "UTF-8"), context)
   }
 
 }
