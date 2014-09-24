@@ -21,7 +21,7 @@ libraryDependencies += "com.github.spullara.mustache.java" % "compiler" % "0.8.9
 
 libraryDependencies += "com.typesafe" % "config" % "1.0.0"
 
-libraryDependencies += "eu.henkelmann" % "actuarius_2.10.0" % "0.2.5"
+libraryDependencies += "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
@@ -38,7 +38,7 @@ libraryDependencies += "com.novocode" % "junit-interface" % "0.8" % "test->defau
 ivyXML := <dependency org="org.eclipse.jetty.orbit" name="javax.servlet" rev="3.0.0.v201112011016"><artifact name="javax.servlet" type="orbit" ext="jar"/></dependency>
 
 // needed to add resource directories to the classpath https://github.com/typesafehub/sbteclipse/issues/73
-EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
+//EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 
 
 //resolvers += "twitter.com" at "http://maven.twttr.com/"

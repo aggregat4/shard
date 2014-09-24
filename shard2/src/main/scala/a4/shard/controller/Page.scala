@@ -12,8 +12,12 @@ case class Page(val config: ShardConfiguration, val pageRenderer: PageRenderer, 
   
   // TODO: do special handling for runtimeexceptions on processing the content? In case of non-transformable, just show the quoted/escaped raw source?
   // TODO: actually render the page!
+  // TODO: render the content of the page
+      // need context! with the markdown rendered content
+      // need fallback for Folder (list of pages + attachments or something)
+      // need attempt to find root page (root.shard.md)
   def apply(req: Request): Response = getPage(req) match {
-    case Some(page) => StringResponse(Ok, "TODO", Some(MediaType.HTML_UTF_8))
+    case Some(page) => StringResponse(Ok, pageRenderer.renderFile(page.file), Some(MediaType.HTML_UTF_8))
     case _ => EmptyResponse(NotFound) // TODO: this not found can only mean that we can't find the actual WIKI, all other cases should theoretically be handled by the fallback logic in getPage(), so this means that in this case we should default to the root of all Wikis and show a flash message that we didn't find the wiki (possibly offer to create it?
   }
 

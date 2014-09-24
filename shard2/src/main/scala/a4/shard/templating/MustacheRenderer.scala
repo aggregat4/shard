@@ -1,13 +1,13 @@
 package a4.shard.templating
 
-import java.io.{InputStream, StringWriter}
+import java.io._
+import java.nio.charset.Charset
 
-import a4.util.StreamUtil
+import a4.util.FileUtil
 import com.github.mustachejava.MustacheFactory
 
 case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
-  //lazy val mf = new NonCachingMustacheFactory(basePath)
-  
+
   private def toJavaList(scalaList: List[AnyRef]) : java.util.List[Object] = {
     val list = new java.util.ArrayList[AnyRef]()
     for (o <- scalaList) list.add(o)
@@ -29,14 +29,26 @@ case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
   } 
   
   override def renderString(template: String, context: Map[String, AnyRef] = Map[String, AnyRef]()) : String = {
-    val mustache = mf.compile(template)
+    renderReader(new StringReader(template), context)
+  }
+
+  override def renderReader(template: Reader, context: Map[String, AnyRef] = Map[String, AnyRef]()) : String = {
+    val mustache = mf.compile(template, "")
     val sw = new StringWriter
     mustache.execute(sw, toJavaMap(context))
     sw.toString
   }
 
   override def renderStream(template: InputStream, context: Map[String, AnyRef]) : String = {
-    renderString(StreamUtil.toString(template, "UTF-8"), context)
+    renderReader(new InputStreamReader(template, Charset.forName("UTF-8")), context)
   }
 
+  override def renderFile(template: File, context: Map[String, AnyRef]): String = {
+    val reader = FileUtil.toUtf8Reader(template)
+    try {
+      return renderReader(reader, context)
+    } finally {
+      reader.close()
+    }
+  }
 }
