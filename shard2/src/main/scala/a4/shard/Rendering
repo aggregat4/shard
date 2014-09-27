@@ -15,10 +15,9 @@ object ContentRenderer {
         assetResolver.getInputStream("assets/templates/folder.mustache"),
         Map[String, AnyRef](
           "pageTitle" -> ("Folder " + folder.relativeUrl),
-          "wikiPage" -> folder.wiki,
-          "pages" -> folder.pages,
-          "files" -> folder.attachments,
-          "folders" -> folder.folders
+          "pageContent" ->
+          "wikiPage" -> folder,
+          "context" -> folder.parent
         )).getBytes(Charset.forName("UTF-8")))
   }
 
