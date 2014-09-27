@@ -6,15 +6,15 @@ import org.junit.Test
 
 class MustacheRendererTest {
 
-  val renderer = MustacheRenderer(new DefaultMustacheFactory("mustachetestbase"))
+  val renderer = MustacheTemplateRenderer(new DefaultMustacheFactory("mustachetestbase"))
   
   @Test(expected = classOf[RuntimeException])
-  def renderNonExistingTemplate : Unit = renderer.renderString("doesnotexist")
+  def renderNonExistingTemplate : Unit = renderer.renderByContent("doesnotexist")
   
   @Test def renderStaticTemplate : Unit = 
-    assertEquals("Foo.", renderer.renderString("static.mustache"))
+    assertEquals("Foo.", renderer.renderByContent("static.mustache"))
     
   @Test def renderWithPartial : Unit = 
-    assertEquals("Foo\nBar", renderer.renderString("withpartial.mustache"))
+    assertEquals("Foo\nBar", renderer.renderByContent("withpartial.mustache"))
     
 }

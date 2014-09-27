@@ -1,9 +1,7 @@
 package a4.shard.transforming
 
 import a4.shard.Page
-import eu.henkelmann.actuarius.ActuariusTransformer
-import eu.henkelmann.actuarius.Decorator
-import eu.henkelmann.actuarius.Transformer
+import eu.henkelmann.actuarius.{Decorator, Transformer}
 
 class DecoratingTransformer(val page: Page) extends Transformer with Decorator {
   override def deco() = this
@@ -14,7 +12,9 @@ class DecoratingTransformer(val page: Page) extends Transformer with Decorator {
     replaceWikiRoot(super.decorateLink(text, url, title))
 }
 
-case class MarkdownTransformer extends PageContentTransformer { 
+case class MarkdownTransformer extends PageContentTransformer {
+
   override def transform(page: Page, content: String): String = 
-    new DecoratingTransformer(page)(content) // ActuariusTransformer is not threadsafe, therefore instantiating a new one each time    
+    new DecoratingTransformer(page)(content) // ActuariusTransformer is not threadsafe, therefore instantiating a new one each time
+
 }

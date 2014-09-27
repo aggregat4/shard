@@ -1,0 +1,32 @@
+package a4.shard
+
+import java.io.{ByteArrayInputStream, InputStream}
+import java.nio.charset.Charset
+
+import a4.shard.templating.PageTemplateRenderer
+import a4.shard.transforming.PageContentTransformer
+import a4.util.AssetResolver
+
+object ContentRenderer {
+
+  def render(folder: Folder, pageTemplateRenderer: PageTemplateRenderer, assetResolver: AssetResolver, contentTransformer: PageContentTransformer) : InputStream = {
+    new ByteArrayInputStream(
+      pageTemplateRenderer.renderStream(
+        assetResolver.getInputStream("assets/templates/folder.mustache"),
+        Map[String, AnyRef](
+          "pageTitle" -> ("Folder " + folder.relativeUrl),
+          "wikiPage" -> folder.wiki,
+          "pages" -> folder.pages,
+          "files" -> folder.attachments,
+          "folders" -> folder.folders
+        )).getBytes(Charset.forName("UTF-8")))
+  }
+
+//  def render(page: Page) : InputStream = {
+//
+//  }
+
+//  def render(attachment: Attachment) : InputStream = {
+//
+//  }
+}

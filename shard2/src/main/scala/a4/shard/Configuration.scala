@@ -1,10 +1,10 @@
 package a4.shard
 
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigObject
 import java.io.File
 
-case class ShardConfiguration(config: Config) {
+import com.typesafe.config.Config
+
+case class Configuration(config: Config) {
 	
   import scala.collection.JavaConversions._
   

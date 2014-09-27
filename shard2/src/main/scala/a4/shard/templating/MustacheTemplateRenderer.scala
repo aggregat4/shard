@@ -6,7 +6,7 @@ import java.nio.charset.Charset
 import a4.util.FileUtil
 import com.github.mustachejava.MustacheFactory
 
-case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
+case class MustacheTemplateRenderer(val mf: MustacheFactory) extends PageTemplateRenderer {
 
   private def toJavaList(scalaList: List[AnyRef]) : java.util.List[Object] = {
     val list = new java.util.ArrayList[AnyRef]()
@@ -28,7 +28,7 @@ case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
     return map
   } 
   
-  override def renderString(template: String, context: Map[String, AnyRef] = Map[String, AnyRef]()) : String = {
+  override def renderByContent(template: String, context: Map[String, AnyRef] = Map[String, AnyRef]()) : String = {
     renderReader(new StringReader(template), context)
   }
 
@@ -51,4 +51,5 @@ case class MustacheRenderer(val mf: MustacheFactory) extends PageRenderer {
       reader.close()
     }
   }
+
 }

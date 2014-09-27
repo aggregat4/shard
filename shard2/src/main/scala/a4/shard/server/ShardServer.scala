@@ -1,9 +1,9 @@
 package a4.shard.server
 
-import a4.shard.ShardConfiguration
+import a4.shard.Configuration
 import a4.shard.controller.{Asset, Page, Root}
 import a4.shard.routing.{GET, Path, Router}
-import a4.shard.templating.MustacheRenderer
+import a4.shard.templating.MustacheTemplateRenderer
 import a4.shard.transforming.MarkdownTransformer
 import a4.util.ClasspathAssetResolver
 import com.github.mustachejava.NonCachingMustacheFactory
@@ -22,8 +22,8 @@ object ShardServer {
   def main(args: Array[String]) : Unit = {
     // DI starts here
     val appConfig = ConfigFactory.load
-    val config = ShardConfiguration(appConfig)
-    val templateRenderer = MustacheRenderer(new NonCachingMustacheFactory("assets/templates"))
+    val config = Configuration(appConfig)
+    val templateRenderer = MustacheTemplateRenderer(new NonCachingMustacheFactory("assets/templates"))
     val assetResolver = ClasspathAssetResolver("assets")
     val contentTransformer = MarkdownTransformer()
     // Controllers
