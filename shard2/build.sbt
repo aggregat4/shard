@@ -27,6 +27,8 @@ libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
 libraryDependencies += "com.google.guava" % "guava" % "14.0"
 
+libraryDependencies += "com.jsuereth" % "scala-arm_2.10" % "1.3"
+
 // ---- TEST
 libraryDependencies += "junit" % "junit" % "4.10" % "test"
 

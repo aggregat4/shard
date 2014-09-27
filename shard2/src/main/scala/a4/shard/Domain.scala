@@ -45,7 +45,9 @@ trait Content {
   def file : File
   def parent : Content
   def relativeUrl : String
-  def exists : Boolean  
+  def isValid : Boolean
+  def url : String = wiki.urlPath + "/" + relativeUrl // TODO: make this a utility method that makes sure we have a slash at the end of the urlpath
+  def name : String = relativeUrl // TODO: make this more sensible (what is sensible?)
 }
 
 case class Folder(wiki: Wiki, file: File) extends Content {
@@ -53,10 +55,10 @@ case class Folder(wiki: Wiki, file: File) extends Content {
   
   override def parent : Content = if (isRoot) this else Folder(wiki, file.getParentFile()) 
   override def relativeUrl : String = file.getName + "/"
-  override def exists : Boolean = file.exists && file.isDirectory
-  
+  override def isValid : Boolean = file.exists && file.isDirectory
+
   // TODO possibly reconsider whether I want this logic inside of the Folder class and not outside such as the construction logic in Content
-  private def filterFiles[T <: Content](ctor: File => T) : List[T] = file.listFiles.map(ctor).filter(_.exists).toList
+  private def filterFiles[T <: Content](ctor: File => T) : List[T] = file.listFiles.map(ctor).filter(_.isValid).toList
     
   def pages : List[Page] = filterFiles[Page](f => new Page(wiki, f))
   def attachments : List[Attachment] = filterFiles[Attachment](f => new Attachment(wiki, f))  
@@ -68,16 +70,16 @@ object Page {
 }
 
 case class Page(val wiki: Wiki, val file: File) extends Content {  
-  private val name = file.getName 
-  private val shortName : String = if (name.endsWith(Page.PAGE_SUFFIX)) name.substring(0, name.length - Page.PAGE_SUFFIX.length) else name
+  private val fileName = file.getName
+  private val shortName : String = if (fileName.endsWith(Page.PAGE_SUFFIX)) fileName.substring(0, fileName.length - Page.PAGE_SUFFIX.length) else fileName
   
   override def parent : Content = Folder(wiki, file.getParentFile())
   override def relativeUrl : String = shortName
-  override def exists : Boolean = file.exists && file.isFile 
+  override def isValid : Boolean = file.exists && file.isFile && file.getName.endsWith(Page.PAGE_SUFFIX)
 }
 
 case class Attachment(val wiki: Wiki, val file: File) extends Content {
   override def parent : Content = Folder(wiki, file.getParentFile)
   override def relativeUrl : String = file.getName
-  override def exists : Boolean = file.exists && file.isFile 
+  override def isValid : Boolean = file.exists && file.isFile && ! file.getName.endsWith(Page.PAGE_SUFFIX)
 }

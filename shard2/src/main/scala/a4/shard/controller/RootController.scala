@@ -7,7 +7,7 @@ import a4.shard.templating.PageTemplateRenderer
 import a4.util.AssetResolver
 import com.google.common.net.MediaType
 
-case class Root(val config: Configuration, val pageRenderer: PageTemplateRenderer, val assetResolver: AssetResolver) {
+case class RootController(val config: Configuration, val pageRenderer: PageTemplateRenderer, val assetResolver: AssetResolver) {
 
   private val rootPageFile = "templates/root.mustache"
 

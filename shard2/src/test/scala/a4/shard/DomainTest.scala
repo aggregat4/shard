@@ -11,7 +11,7 @@ class DomainTest {
   val fooWiki = Wiki("foo", "Foo Wiki", fooWikiLocation)
   val fooRoot = Folder(fooWiki, fooWiki.location)
   
-  @Test def rootPageExistence = assertTrue(fooRoot.exists)
+  @Test def rootPageExistence = assertTrue(fooRoot.isValid)
   
   @Test def rootPageFile: Unit = assertEquals(fooWikiLocation, fooRoot.file)
 
