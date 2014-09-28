@@ -47,10 +47,11 @@
     <orderEntry type="library" name="SBT: org.eclipse.jetty:jetty-util:9.0.0.M4" level="project" />
     <orderEntry type="library" name="SBT: org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.10.0" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.scala-tools.testing:test-interface:0.5" level="project" />
     <orderEntry type="library" name="SBT: org.slf4j:slf4j-api:1.6.4" level="project" />
     <orderEntry type="library" name="SBT: com.jsuereth:scala-arm_2.10:1.3" level="project" />
+    <orderEntry type="library" name="SBT: com.scalatags:scalatags_2.10:0.4.0" level="project" />
+    <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.10.4" level="project" />
   </component>
 </module>
 

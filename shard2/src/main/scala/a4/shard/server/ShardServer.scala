@@ -2,6 +2,7 @@ package a4.shard.server
 
 import a4.shard.Configuration
 import a4.shard.controller.{AssetController, PageController, RootController}
+import a4.shard.render.CodeContentRenderer
 import a4.shard.routing.{GET, Path, Router}
 import a4.shard.templating.MustacheTemplateRenderer
 import a4.shard.transforming.MarkdownTransformer
@@ -28,7 +29,9 @@ object ShardServer {
     // Controllers
     val assetController = AssetController(config, templateRenderer, assetResolver)
     val rootController = RootController(config, templateRenderer, assetResolver)
-    val pageController = PageController(config, templateRenderer, assetResolver, contentTransformer)
+//    val contentRenderer = new TemplateContentRenderer(templateRenderer, assetResolver, contentTransformer)
+    val contentRenderer = new CodeContentRenderer(contentTransformer)
+    val pageController = PageController(config, contentRenderer)
     // Router
     val router = Router(
       Path("/").routes((GET, rootController.apply)) :::
