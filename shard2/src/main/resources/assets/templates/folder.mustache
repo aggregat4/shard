@@ -3,30 +3,34 @@
 <article class="folderContent">
 
 <div class="row">
-    <div class="span4">
+    <div class="span2"></div>
+    <div class="span3">
     	<h2>Pages</h2>
     	<ul class="pageslist">
-    		{{#pages}}
-    			<li><a href="{{url}}">{{url}}</a>
-    		{{/pages}}
+        {{#wikiPage}}
+            {{#pages}}
+            <li><a href="{{url}}">{{name}}</a>
+            {{/pages}}
+        {{/wikiPage}}
     	</ul>
     </div>
-    <div class="span4">
+    <div class="span3">
     	<h2>Files</h2>
     	<ul class="filelist">
-    		{{#files}}
-    			<li><a href="{{url}}">{{url}}</a>
-    		{{/files}}
+    		{{#wikiPage.files}}
+    			<li><a href="{{url}}">{{name}}</a>
+    		{{/wikiPage.files}}
     	</ul>
     </div>
-    <div class="span4">
+    <div class="span3">
     	<h2>Folders</h2>
     	<ul class="folderlist">
-    		{{#folders}}
-    			<li><a href="{{url}}/">{{url}}/</a>
-    		{{/folders}}
+    		{{#wikiPage.folders}}
+    			<li><a href="{{url}}/">{{name}}/</a>
+    		{{/wikiPage.folders}}
     	</ul>
     </div>
+    <div class="span1"></div>
 </div>
 
 </article>

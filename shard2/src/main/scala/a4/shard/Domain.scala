@@ -11,16 +11,13 @@ case class Wiki(id: String, name: String, location: File) {
 object Content {
   private def isRoot(name: String) = PathUtil.isEmpty(name.trim) || name.trim == "/"
   
-  private def validFile(file: File) : Boolean = file.exists && file.isFile
-  private def validDirectory(file: File) : Boolean = file.exists && file.isDirectory
-  private def isPage(file: File) : Boolean = validFile(file) && file.getName.endsWith(Page.PAGE_SUFFIX)
-  private def isAttachment(file: File) : Boolean = validFile(file) && ! isPage(file)
-  private def isFolder(file: File) : Boolean = ! isPage(file) && ! isAttachment(file) && validDirectory(file)
-   
+  def validFile(file: File) : Boolean = file.exists && file.isFile
+  def validDirectory(file: File) : Boolean = file.exists && file.isDirectory
+
   private def determineType(wiki: Wiki, file: File) : Option[Content] =
-    if (isPage(file)) Some(Page(wiki, file))
-  	else if (isAttachment(file)) Some(Attachment(wiki, file))
-  	else if (isFolder(file)) Some(Folder(wiki, file))
+    if (Page.isPage(file)) Some(Page(wiki, file))
+  	else if (Attachment.isAttachment(file)) Some(Attachment(wiki, file))
+  	else if (Folder.isFolder(file)) Some(Folder(wiki, file))
   	else None
   
   private def toContent(wiki: Wiki, name: String) : Option[Content] =
@@ -46,16 +43,18 @@ trait Content {
   def parent : Content
   def relativeUrl : String
   def isValid : Boolean
-  def url : String = wiki.urlPath + "/" + relativeUrl // TODO: make this a utility method that makes sure we have a slash at the end of the urlpath
-  def name : String = relativeUrl // TODO: make this more sensible (what is sensible?)
+}
+
+object Folder {
+  def isFolder(file: File) : Boolean = Content.validDirectory(file)
 }
 
 case class Folder(wiki: Wiki, file: File) extends Content {
   private def isRoot : Boolean = file.equals(wiki.location)
   
-  override def parent : Content = if (isRoot) this else Folder(wiki, file.getParentFile()) 
+  override def parent : Folder = if (isRoot) this else Folder(wiki, file.getParentFile)
   override def relativeUrl : String = file.getName + "/"
-  override def isValid : Boolean = file.exists && file.isDirectory
+  override def isValid : Boolean = Folder.isFolder(file)
 
   // TODO possibly reconsider whether I want this logic inside of the Folder class and not outside such as the construction logic in Content
   private def filterFiles[T <: Content](ctor: File => T) : List[T] = file.listFiles.map(ctor).filter(_.isValid).toList
@@ -67,19 +66,24 @@ case class Folder(wiki: Wiki, file: File) extends Content {
 
 object Page {
   val PAGE_SUFFIX : String = ".shard.md"
+  def isPage(file: File) : Boolean = Content.validFile(file) && file.getName.endsWith(Page.PAGE_SUFFIX)
 }
 
-case class Page(val wiki: Wiki, val file: File) extends Content {  
+case class Page(wiki: Wiki, file: File) extends Content {
   private val fileName = file.getName
   private val shortName : String = if (fileName.endsWith(Page.PAGE_SUFFIX)) fileName.substring(0, fileName.length - Page.PAGE_SUFFIX.length) else fileName
   
-  override def parent : Content = Folder(wiki, file.getParentFile())
+  override def parent : Folder = Folder(wiki, file.getParentFile)
   override def relativeUrl : String = shortName
-  override def isValid : Boolean = file.exists && file.isFile && file.getName.endsWith(Page.PAGE_SUFFIX)
+  override def isValid : Boolean = Page.isPage(file)
 }
 
-case class Attachment(val wiki: Wiki, val file: File) extends Content {
-  override def parent : Content = Folder(wiki, file.getParentFile)
+object Attachment {
+  def isAttachment(file: File) : Boolean = Content.validFile(file) && ! Page.isPage(file)
+}
+
+case class Attachment(wiki: Wiki, file: File) extends Content {
+  override def parent : Folder = Folder(wiki, file.getParentFile)
   override def relativeUrl : String = file.getName
-  override def isValid : Boolean = file.exists && file.isFile && ! file.getName.endsWith(Page.PAGE_SUFFIX)
+  override def isValid : Boolean = Attachment.isAttachment(file)
 }

@@ -18,8 +18,8 @@ case class MustacheTemplateRenderer(mf: MustacheFactory) extends PageTemplateRen
     val map = new java.util.HashMap[String, Object]()
     for ((k, v) <- scalaMap) {
       v match {
-        case _: Map[String, AnyRef] => map.put(k, toJavaMap(v.asInstanceOf[Map[String, AnyRef]]))
-        case _: List[AnyRef] => map.put(k, toJavaList(v.asInstanceOf[List[AnyRef]]))
+        case value if value.isInstanceOf[Map[_, _]] => map.put(k, toJavaMap(v.asInstanceOf[Map[String, AnyRef]]))
+        case value if value.isInstanceOf[List[_]] => map.put(k, toJavaList(v.asInstanceOf[List[AnyRef]]))
         case _ => map.put(k, v)
       }
     }
