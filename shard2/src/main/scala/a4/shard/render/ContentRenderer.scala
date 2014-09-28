@@ -43,9 +43,9 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         a(href := "/")("Home")),
         button("Context"),
         div(cls :=  "contextPopup")(
-          renderContentList("Pages", contextFolder.pages)/* ++
+          (renderContentList("Pages", contextFolder.pages) ++
           renderContentList("Files", contextFolder.attachments) ++
-          renderContentList("Folders", contextFolder.folders)*/
+          renderContentList("Folders", contextFolder.folders)):_* // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
         ))
 
   private def renderFooter() : Modifier =

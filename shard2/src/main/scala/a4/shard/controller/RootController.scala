@@ -11,6 +11,7 @@ case class RootController(val config: Configuration, val pageRenderer: PageTempl
 
   private val rootPageFile = "templates/root.mustache"
 
+  // TODO: replace with ContentRenderer, specifically CodeContentRenderer
   def apply(req: Request): Response =
     StringResponse(Ok, pageRenderer.renderStream(assetResolver.getInputStream(rootPageFile), Map("wikis" -> config.wikis)), Some(MediaType.HTML_UTF_8))
 
