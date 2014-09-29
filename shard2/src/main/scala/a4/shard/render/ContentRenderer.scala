@@ -4,10 +4,8 @@ import java.io.{ByteArrayInputStream, FileInputStream, InputStream}
 import java.nio.charset.Charset
 
 import a4.shard._
-import a4.shard.templating.PageTemplateRenderer
 import a4.shard.transforming.PageContentTransformer
-import a4.shard.view.ViewDomain
-import a4.util.{AssetResolver, FileUtil}
+import a4.util.FileUtil
 
 import scalatags.Text.all._
 import scalatags.Text.tags2
@@ -89,33 +87,5 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
 
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString()).getBytes(Charset.forName("UTF-8")))
-
-}
-
-/**
- * Legacy renderer that uses a templating system to render the complete page (Mustache only so far). Did not actually
- * pull the variables out of the context reliably and I abandoned it for a pure code based renderer.
- */
-class TemplateContentRenderer(pageTemplateRenderer: PageTemplateRenderer, assetResolver: AssetResolver, contentTransformer: PageContentTransformer) extends ContentRenderer {
-
-  override def render(folder: Folder) : InputStream = {
-    val vm = ViewDomain.createViewModel("Folder FIXME", folder)
-    render(
-      Map("vm" -> ViewDomain.createViewModel("Folder FIXME", folder)),
-      "templates/folder.mustache")
-  }
-
-  override def render(page: Page) : InputStream =
-    render(
-      Map("vm" -> ViewDomain.createViewModel("Folder FIXME", page), "pageContent" -> contentTransformer.transform(page, FileUtil.readAsUtf8(page.file))),
-      "templates/page.mustache")
-
-  private def render(context: Map[String, AnyRef], templateName: String) : InputStream =
-    new ByteArrayInputStream(
-      pageTemplateRenderer
-        .renderStream(assetResolver.getInputStream(templateName), context)
-        .getBytes(Charset.forName("UTF-8")))
-
-  override def renderRoot(wikis: List[Wiki]): InputStream = ???
 
 }

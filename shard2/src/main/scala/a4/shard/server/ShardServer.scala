@@ -4,10 +4,8 @@ import a4.shard.Configuration
 import a4.shard.controller.{AssetController, PageController, RootController}
 import a4.shard.render.CodeContentRenderer
 import a4.shard.routing.{GET, Path, Router}
-import a4.shard.templating.MustacheTemplateRenderer
 import a4.shard.transforming.MarkdownTransformer
 import a4.util.ClasspathAssetResolver
-import com.github.mustachejava.NonCachingMustacheFactory
 import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.{ServletHandler, ServletHolder}
@@ -23,11 +21,9 @@ object ShardServer {
     // DI starts here
     val appConfig = ConfigFactory.load
     val config = Configuration(appConfig)
-    val templateRenderer = MustacheTemplateRenderer(new NonCachingMustacheFactory("assets/templates"))
     val assetResolver = ClasspathAssetResolver("assets")
     val contentTransformer = MarkdownTransformer()
     val contentRenderer = new CodeContentRenderer(contentTransformer)
-//    val contentRenderer = new TemplateContentRenderer(templateRenderer, assetResolver, contentTransformer)
     // Controllers
     val assetController = AssetController(config, assetResolver)
     val rootController = RootController(config, contentRenderer)
