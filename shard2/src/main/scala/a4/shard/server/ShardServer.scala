@@ -26,11 +26,11 @@ object ShardServer {
     val templateRenderer = MustacheTemplateRenderer(new NonCachingMustacheFactory("assets/templates"))
     val assetResolver = ClasspathAssetResolver("assets")
     val contentTransformer = MarkdownTransformer()
-    // Controllers
-    val assetController = AssetController(config, templateRenderer, assetResolver)
-    val rootController = RootController(config, templateRenderer, assetResolver)
-//    val contentRenderer = new TemplateContentRenderer(templateRenderer, assetResolver, contentTransformer)
     val contentRenderer = new CodeContentRenderer(contentTransformer)
+//    val contentRenderer = new TemplateContentRenderer(templateRenderer, assetResolver, contentTransformer)
+    // Controllers
+    val assetController = AssetController(config, assetResolver)
+    val rootController = RootController(config, contentRenderer)
     val pageController = PageController(config, contentRenderer)
     // Router
     val router = Router(

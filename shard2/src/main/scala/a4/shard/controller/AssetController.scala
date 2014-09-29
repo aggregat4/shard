@@ -3,11 +3,10 @@ package a4.shard.controller
 import a4.shard.Configuration
 import a4.shard.routing.Status._
 import a4.shard.routing.{InputStreamResponse, Request, Response}
-import a4.shard.templating.PageTemplateRenderer
 import a4.util.AssetResolver
 import com.google.common.net.MediaType
 
-case class AssetController(val config: Configuration, val pageRenderer: PageTemplateRenderer, val assetResolver: AssetResolver) {
+case class AssetController(config: Configuration, assetResolver: AssetResolver) {
 
   private def getAssetContentType(req: Request) : Option[MediaType] = 
     if (req.pathUrl.startsWith("/css")) Some(MediaType.CSS_UTF_8)

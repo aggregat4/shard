@@ -16,9 +16,41 @@ trait ContentRenderer {
   def render(folder: Folder) : InputStream
   def render(page: Page) : InputStream
   def render(attachment: Attachment) : InputStream = new FileInputStream(attachment.file)
+  def renderRoot(wikis: List[Wiki]) : InputStream
 }
 
 class CodeContentRenderer(contentTransformer: PageContentTransformer) extends ContentRenderer {
+
+  override def render(folder: Folder) : InputStream =
+    toInputStream(
+      html(
+        renderHead("Folder FIXME"),
+        body(
+          renderHeader(Some(folder.wiki), folder, folder),
+          renderFooter())))
+
+  override def render(page: Page) : InputStream =
+    toInputStream(
+      html(
+        renderHead("Page FIXME"),
+        body(
+          renderHeader(Some(page.wiki), page, page.parent),
+          raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file))),
+          renderFooter())))
+
+  override def renderRoot(wikis: List[Wiki]): InputStream =
+    toInputStream(
+      html(
+        renderHead("Shard Root"),
+        body(
+          header(
+            tags2.nav(
+              a(href := "/")("Home"))),
+          h1("Shard"),
+          p("You have the following wikis configured:"),
+          // TODO fix url rendering
+          ul(wikis.map(w => a(href := "wiki/" + w.id)(w.name))),
+          renderFooter())))
 
   private val DOCTYPE: String = "<!DOCTYPE html>"
 
@@ -35,7 +67,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
     else
       Seq(
         h3(title),
-        ul(items.map(p => li(a(href := p.relativeUrl)(p.relativeUrl))))) // TODO: real url, real name
+        ul(items.map(p => li(a(href := "/wiki/" + p.wiki.id + "/page/" + p.relativeUrl)(p.relativeUrl))))) // TODO: real url, real name
 
   private def renderHeader(wiki: Option[Wiki], wikiPage: Content, contextFolder: Folder) : Modifier =
     header(
@@ -57,23 +89,6 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
 
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString()).getBytes(Charset.forName("UTF-8")))
-
-  override def render(folder: Folder) : InputStream =
-    toInputStream(
-      html(
-        renderHead("Folder FIXME"),
-        body(
-          renderHeader(Some(folder.wiki), folder, folder),
-          renderFooter())))
-
-  override def render(page: Page) : InputStream =
-    toInputStream(
-      html(
-        renderHead("Page FIXME"),
-        body(
-          renderHeader(Some(page.wiki), page, page.parent),
-          raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file))),
-          renderFooter())))
 
 }
 
@@ -100,5 +115,7 @@ class TemplateContentRenderer(pageTemplateRenderer: PageTemplateRenderer, assetR
       pageTemplateRenderer
         .renderStream(assetResolver.getInputStream(templateName), context)
         .getBytes(Charset.forName("UTF-8")))
+
+  override def renderRoot(wikis: List[Wiki]): InputStream = ???
 
 }
