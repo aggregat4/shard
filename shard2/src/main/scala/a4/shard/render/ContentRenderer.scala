@@ -64,7 +64,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
     else
       Seq(
         h3(title),
-        ul(items.map(p => li(a(href := "/wiki/" + p.wiki.id + "/page/" + p.relativeUrl)(p.relativeUrl))))) // TODO: real name
+        ul(items.map(p => li(toWikiPageLink(p)))))
 
   private def renderHeader(wiki: Option[Wiki], wikiPage: Content, contextFolder: Folder) : Modifier =
     header(
@@ -75,8 +75,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
           (renderContentList("Pages", contextFolder.pages) ++
           renderContentList("Files", contextFolder.attachments) ++
           renderContentList("Folders", contextFolder.folders)):_*),  // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
-        ol( // TODO: map a list of paths from root to a list of lis
-          ))
+        ol(toBreadCrumbs(wikiPage).map(c => li(toWikiPageLink(c)))))
 
   private def renderFooter() : Modifier =
     footer(
@@ -84,5 +83,18 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
 
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString()).getBytes(Charset.forName("UTF-8")))
+
+  private def toWikiPageLink(content: Content) : Modifier =
+    a(href := "/wiki/" + content.wiki.id + "/page/" + content.relativeUrl)(getName(content))
+
+  // TODO: real name
+  private def getName(content: Content) : String =
+    if (Content.isRoot(content)) content.wiki.name + " Root"
+    else if (content.isInstanceOf[Attachment]) content.file.getName
+    else content.relativeUrl
+
+  private def toBreadCrumbs(content: Content) : List[Content] =
+    if (Content.isRoot(content)) List(content)
+    else toBreadCrumbs(content.parent) ++ List(content)
 
 }

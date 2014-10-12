@@ -10,7 +10,9 @@ case class Wiki(id: String, name: String, location: File) {
 
 object Content {
   private def isRoot(name: String) = PathUtil.isEmpty(name.trim) || name.trim == "/"
-  
+
+  def isRoot(content: Content) : Boolean = isRoot(content.relativeUrl)
+
   def validFile(file: File) : Boolean = file.exists && file.isFile
   def validDirectory(file: File) : Boolean = file.exists && file.isDirectory
 
