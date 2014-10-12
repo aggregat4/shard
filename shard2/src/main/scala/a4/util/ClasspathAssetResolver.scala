@@ -2,7 +2,7 @@ package a4.util
 
 import java.io.InputStream
 
-case class ClasspathAssetResolver(val basePath: String) extends AssetResolver {
+case class ClasspathAssetResolver(basePath: String) extends AssetResolver {
 
   val cleanBasePath = basePath match {
     case "" => ""
@@ -14,8 +14,12 @@ case class ClasspathAssetResolver(val basePath: String) extends AssetResolver {
     case path if path.startsWith("/") => path
     case _ => relativePath
   } 
-  
-  private def fullPath(relativePath: String) = cleanBasePath + normalizeRelativePath(relativePath)
+
+  private def stripUrlParams(url: String) : String =
+    if (url.contains("?")) url.substring(0, url.indexOf("?"))
+    else url
+
+  private def fullPath(relativePath: String) = cleanBasePath + normalizeRelativePath(stripUrlParams(relativePath))
   
   // Note: the "getClassLoader" interjection appears to be necessary to be able to actually load resources from the classpath, especially in tests
   override def getInputStream(relativePath: String) : InputStream = {

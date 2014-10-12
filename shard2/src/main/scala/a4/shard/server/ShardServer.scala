@@ -42,7 +42,9 @@ object ShardServer {
     val shardWikiServlet = ShardWikiServlet(router)
     val server = new Server(8080)
     val servletHandler = new ServletHandler()
-    servletHandler.addServletWithMapping(new ServletHolder(shardWikiServlet), "/*")
+    val servletHolder = new ServletHolder(shardWikiServlet)
+    servletHolder.setInitParameter("cacheControl","no-cache")
+    servletHandler.addServletWithMapping(servletHolder, "/*")
     server.setHandler(servletHandler)
     server.start()
   }

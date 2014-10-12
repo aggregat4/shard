@@ -1,0 +1,16 @@
+article {
+    height: calc(100% - 110px); /* total body height minus header and footer (note that those containers should not have padding by themselves */
+    padding: 0;
+}
+
+.page-editor {
+    height: 100%;
+    display: none;
+}
+
+.page-editor textarea {
+    width: calc(100% - 30px); /* scrollbar subtraction + margin subtraction */
+    height: calc(100% - 30px); /* scrollbar subtraction + margin subtraction */
+    font-family: monospace;
+    margin: 10px;
+}

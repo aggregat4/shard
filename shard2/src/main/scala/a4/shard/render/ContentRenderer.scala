@@ -25,6 +25,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         renderHead("Folder FIXME"),
         body(
           renderHeader(Some(folder.wiki), folder, folder),
+          tags2.article(),
           renderFooter())))
 
   override def render(page: Page) : InputStream =
@@ -33,7 +34,10 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         renderHead("Page FIXME"),
         body(
           renderHeader(Some(page.wiki), page, page.parent),
-          raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file))),
+          tags2.article(
+            button(cls := "edit", "Edit"),
+            div(cls := "page-content", raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
+            div(cls := "page-editor", textarea(FileUtil.readAsUtf8(page.file)))),
           renderFooter())))
 
   override def renderRoot(wikis: List[Wiki]): InputStream =
@@ -44,9 +48,10 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
           header(
             tags2.nav(
               a(href := "/")("Home"))),
-          h1("Shard"),
-          p("You have the following wikis configured:"),
-          ul(wikis.map(w => a(href := "wiki/" + w.id)(w.name))),
+          tags2.article(
+            h1("Shard"),
+            p("You have the following wikis configured:"),
+            ul(wikis.map(w => a(href := "wiki/" + w.id)(w.name)))),
           renderFooter())))
 
   private val DOCTYPE: String = "<!DOCTYPE html>"
@@ -56,7 +61,16 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
       meta(charset := "utf-8"),
       meta(httpEquiv := "X-UA-Compatible", content := "IE=edge,chrome=1"),
       meta(name := "viewport", content := "width=device-width"),
-      tags2.title(pageTitle))
+      tags2.title(pageTitle),
+      // todo: need a  dev mode that makes random urls and normal stable urls in normal mode
+      cssLink("/css/normalize.css"),
+      cssLink("/css/main.css"),
+      cssLink("/css/header.css"),
+      cssLink("/css/page.css"),
+      cssLink("/css/footer.css"))
+
+  private def cssLink(name: String) : Modifier =
+    link(rel := "stylesheet", `type` := "text/css", href := name)
 
   private def renderContentList(title: String, items: List[Content]) : Seq[Modifier] =
     if (items.isEmpty)
@@ -69,29 +83,37 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
   private def renderHeader(wiki: Option[Wiki], wikiPage: Content, contextFolder: Folder) : Modifier =
     header(
       tags2.nav(
-        a(href := "/")("Home")),
-        button("Context"),
+        a(cls := "allwikis", href := "/")("All Wikis"),
+        ol(cls := "breadcrumbs", toBreadCrumbs(wikiPage).map(c => li(toWikiPageLink(c)))),
+        button(cls := "context", "Context"),
         div(cls :=  "contextPopup")(
           (renderContentList("Pages", contextFolder.pages) ++
           renderContentList("Files", contextFolder.attachments) ++
-          renderContentList("Folders", contextFolder.folders)):_*),  // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
-        ol(toBreadCrumbs(wikiPage).map(c => li(toWikiPageLink(c)))))
+          renderContentList("Folders", contextFolder.folders)):_*), // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
+        renderClearerDiv()))
+
+  private def renderClearerDiv() : Modifier = div(cls := "clearer")
 
   private def renderFooter() : Modifier =
     footer(
-      p(i("This page produced by Shard.")))
+      i("This page produced by Shard."),
+      script(src := "/js/mega.js"),
+      script(src := "/js/main.js"))
 
   private def toInputStream(root: Modifier) : InputStream =
-    new ByteArrayInputStream((DOCTYPE + root.toString()).getBytes(Charset.forName("UTF-8")))
+    new ByteArrayInputStream((DOCTYPE + root.toString).getBytes(Charset.forName("UTF-8")))
 
   private def toWikiPageLink(content: Content) : Modifier =
     a(href := "/wiki/" + content.wiki.id + "/page/" + content.relativeUrl)(getName(content))
 
   // TODO: real name
-  private def getName(content: Content) : String =
-    if (Content.isRoot(content)) content.wiki.name + " Root"
-    else if (content.isInstanceOf[Attachment]) content.file.getName
-    else content.relativeUrl
+  private def getName(content: Content) : Modifier = content match {
+    case c if Content.isRoot(c) => span(cls := "root-link", c.wiki.name + " Root")
+    case a: Attachment => span(cls := "attachment-link", a.file.getName)
+    case p: Page => span(cls := "page-link", p.file.getName)
+    case f: Folder => span(cls := "folder-link", f.file.getName)
+    case c => c.relativeUrl
+  }
 
   private def toBreadCrumbs(content: Content) : List[Content] =
     if (Content.isRoot(content)) List(content)
