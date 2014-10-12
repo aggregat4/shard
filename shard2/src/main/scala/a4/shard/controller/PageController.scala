@@ -1,5 +1,7 @@
 package a4.shard.controller
 
+import java.nio.file.Files
+
 import a4.shard._
 import a4.shard.render._
 import a4.shard.routing.Status._
@@ -12,8 +14,8 @@ case class PageController(config: Configuration, contentRenderer: ContentRendere
   def apply(req: Request): Response = getPage(req) match {
     case Some(page) if page.isInstanceOf[Folder] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Folder]), Some(MediaType.HTML_UTF_8))
     case Some(page) if page.isInstanceOf[Page] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Page]), Some(MediaType.HTML_UTF_8))
-    // TODO: be cleverer with the mediatype, in the case of attachments we should attempt to cover some common cases (extension based? maybe there is a library for this? mediatype sniffer?)
-    case Some(page) if page.isInstanceOf[Attachment] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Attachment]), Some(MediaType.APPLICATION_BINARY))
+    // TODO: the Java 7 mediatype prober can be extended somehow, Apache Tika apparently does this
+    case Some(page) if page.isInstanceOf[Attachment] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Attachment]), Some(MediaType.parse(Files.probeContentType(page.file.toPath))))
     case _ => EmptyResponse(NotFound) // TODO: this not found can only mean that we can't find the actual WIKI, all other cases should theoretically be handled by the fallback logic in getPage(), so this means that in this case we should default to the root of all Wikis and show a flash message that we didn't find the wiki (possibly offer to create it?
   }
 

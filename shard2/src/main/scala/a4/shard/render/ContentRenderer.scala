@@ -74,7 +74,9 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         div(cls :=  "contextPopup")(
           (renderContentList("Pages", contextFolder.pages) ++
           renderContentList("Files", contextFolder.attachments) ++
-          renderContentList("Folders", contextFolder.folders)):_*)) // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
+          renderContentList("Folders", contextFolder.folders)):_*),  // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
+        ol( // TODO: map a list of paths from root to a list of lis
+          ))
 
   private def renderFooter() : Modifier =
     footer(

@@ -27,7 +27,7 @@ libraryDependencies += "com.google.guava" % "guava" % "14.0"
 
 libraryDependencies += "com.jsuereth" % "scala-arm_2.10" % "1.3"
 
-libraryDependencies += "com.scalatags" % "scalatags" % "0.4.1"
+libraryDependencies += "com.scalatags" % "scalatags_2.10" % "0.4.2"
 
 // ---- TEST
 libraryDependencies += "junit" % "junit" % "4.10" % "test"
