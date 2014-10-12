@@ -46,7 +46,6 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
               a(href := "/")("Home"))),
           h1("Shard"),
           p("You have the following wikis configured:"),
-          // TODO fix url rendering
           ul(wikis.map(w => a(href := "wiki/" + w.id)(w.name))),
           renderFooter())))
 
@@ -65,7 +64,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
     else
       Seq(
         h3(title),
-        ul(items.map(p => li(a(href := "/wiki/" + p.wiki.id + "/page/" + p.relativeUrl)(p.relativeUrl))))) // TODO: real url, real name
+        ul(items.map(p => li(a(href := "/wiki/" + p.wiki.id + "/page/" + p.relativeUrl)(p.relativeUrl))))) // TODO: real name
 
   private def renderHeader(wiki: Option[Wiki], wikiPage: Content, contextFolder: Folder) : Modifier =
     header(
@@ -75,15 +74,11 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         div(cls :=  "contextPopup")(
           (renderContentList("Pages", contextFolder.pages) ++
           renderContentList("Files", contextFolder.attachments) ++
-          renderContentList("Folders", contextFolder.folders)):_* // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
-        ))
+          renderContentList("Folders", contextFolder.folders)):_*)) // Note: I'm splatting the elements of the Seq since scalatags apparently doesn't deal with the Seq well
 
   private def renderFooter() : Modifier =
     footer(
-      p(
-        "This page produced by ",
-        a(href := "http://example.com")("Shard"),
-        "."))
+      p(i("This page produced by Shard.")))
 
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString()).getBytes(Charset.forName("UTF-8")))

@@ -53,7 +53,7 @@ case class Folder(wiki: Wiki, file: File) extends Content {
   private def isRoot : Boolean = file.equals(wiki.location)
   
   override def parent : Folder = if (isRoot) this else Folder(wiki, file.getParentFile)
-  override def relativeUrl : String = file.getName + "/"
+  override def relativeUrl : String = if (isRoot) "" else file.getName + "/"
   override def isValid : Boolean = Folder.isFolder(file)
 
   // TODO possibly reconsider whether I want this logic inside of the Folder class and not outside such as the construction logic in Content
@@ -74,7 +74,7 @@ case class Page(wiki: Wiki, file: File) extends Content {
   private val shortName : String = if (fileName.endsWith(Page.PAGE_SUFFIX)) fileName.substring(0, fileName.length - Page.PAGE_SUFFIX.length) else fileName
   
   override def parent : Folder = Folder(wiki, file.getParentFile)
-  override def relativeUrl : String = shortName
+  override def relativeUrl : String = parent.relativeUrl + shortName
   override def isValid : Boolean = Page.isPage(file)
 }
 
