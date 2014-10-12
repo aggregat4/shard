@@ -101,8 +101,8 @@ case class Route(val path: Path, val method: Method, val action: Action) {
 case class Path(val path: String) {
   private val variableRegexPattern = "\\{([a-zA-Z]+)\\}" 
   // Note that for the actual variable *values* we also match on forward slashes, this means that
-  // URL variables can also be path fragments, e.g. "foo/bar/baz" 
-  private val valueRegexPattern = "([a-zA-Z/]+)" 
+  // URL variables can also be path fragments, e.g. "foo/bar/baz", we match on periods since they can occur in filenames
+  private val valueRegexPattern = "(.+)" // Used to have a constrained pattern here: "a-zA-Z/\.\-", I wonder whether I'll get trouble with this globbing pattern?
   private val variableRegex = variableRegexPattern.r
   val variableNames = variableRegex.findAllIn(path).matchData.map(group => group.group(1)).toList
   // ": _*" seems to be a way to convert a List to a varargs. Magic. Fucking scala.

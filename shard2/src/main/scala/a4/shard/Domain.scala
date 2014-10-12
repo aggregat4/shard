@@ -84,6 +84,6 @@ object Attachment {
 
 case class Attachment(wiki: Wiki, file: File) extends Content {
   override def parent : Folder = Folder(wiki, file.getParentFile)
-  override def relativeUrl : String = file.getName
+  override def relativeUrl : String = parent.relativeUrl + file.getName
   override def isValid : Boolean = Attachment.isAttachment(file)
 }
