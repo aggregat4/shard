@@ -1,6 +1,6 @@
 package a4.util
 
-import java.io.{File, FileInputStream, InputStreamReader, Reader}
+import java.io._
 import java.nio.charset.Charset
 
 import org.apache.commons.io.FileUtils

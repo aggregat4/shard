@@ -3,7 +3,7 @@ package a4.shard.server
 import a4.shard.Configuration
 import a4.shard.controller.{AssetController, PageController, RootController}
 import a4.shard.render.CodeContentRenderer
-import a4.shard.routing.{GET, Path, Router}
+import a4.shard.routing.{GET, POST, Path, Router}
 import a4.shard.transforming.MarkdownTransformer
 import a4.util.ClasspathAssetResolver
 import com.typesafe.config.ConfigFactory
@@ -31,9 +31,9 @@ object ShardServer {
     // Router
     val router = Router(
       Path("/").routes((GET, rootController.apply)) :::
-	    Path("/wiki/{wiki}/page/{page}").routes((GET, pageController.apply)) :::
-      Path("/wiki/{wiki}/page/").routes((GET, pageController.apply)) :::
-      Path("/wiki/{wiki}").routes((GET, pageController.apply)) :::
+	    Path("/wiki/{wiki}/page/{page}").routes((GET, pageController.view), (POST, pageController.edit)) :::
+      Path("/wiki/{wiki}/page/").routes((GET, pageController.view)) :::
+      Path("/wiki/{wiki}").routes((GET, pageController.view)) :::
       Path("/css/**").routes((GET, assetController.apply)) :::
       Path("/js/**").routes((GET, assetController.apply)) :::
       Path("/img/**").routes((GET, assetController.apply))

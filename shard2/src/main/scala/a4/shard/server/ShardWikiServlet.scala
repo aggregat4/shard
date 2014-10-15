@@ -6,7 +6,7 @@ import a4.shard.routing.Status._
 import a4.shard.routing._
 import a4.util.StreamUtil
 
-case class ShardWikiServlet(val router: Router) extends HttpServlet {
+case class ShardWikiServlet(router: Router) extends HttpServlet {
 
   override def doGet(httpRequest: HttpServletRequest, httpResponse: HttpServletResponse) : Unit = {
     val request = new ServletRequest(httpRequest)
@@ -15,6 +15,7 @@ case class ShardWikiServlet(val router: Router) extends HttpServlet {
       case None => EmptyResponse(NotFound)
     }
     httpResponse.setStatus(response.status.value)
+    for (header <- response.headers) httpResponse.setHeader(header.name, header.value)
     response.contentType match {
       case Some(mediaType) => httpResponse.setContentType(mediaType.toString)
       case None => None
@@ -23,5 +24,4 @@ case class ShardWikiServlet(val router: Router) extends HttpServlet {
     println("url: " + request.pathUrl + ", Content-Type: " + response.contentType)
     StreamUtil.copy(response.body, httpResponse.getOutputStream)
   }
-    
 }

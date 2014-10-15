@@ -35,8 +35,9 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         body(
           renderHeader(Some(page.wiki), page, page.parent),
           tags2.article(
-            button(cls := "edit", "Edit"),
-            div(cls := "page-content", raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
+            div(cls := "page-content",
+              button(cls := "edit", "Edit"),
+              raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
             div(cls := "page-editor", textarea(FileUtil.readAsUtf8(page.file)))),
           renderFooter())))
 
@@ -103,10 +104,14 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString).getBytes(Charset.forName("UTF-8")))
 
-  private def toWikiPageLink(content: Content) : Modifier =
-    a(href := "/wiki/" + content.wiki.id + "/page/" + content.relativeUrl)(getName(content))
+  private def toBreadCrumbs(content: Content) : List[Content] =
+    if (Content.isRoot(content)) List(content)
+    else toBreadCrumbs(content.parent) ++ List(content)
 
-  // TODO: real name
+  private def toWikiPageLink(content: Content) : Modifier =
+    a(href := Content.toLink(content))(getName(content))
+
+  // TODO: real name, what is the name?
   private def getName(content: Content) : Modifier = content match {
     case c if Content.isRoot(c) => span(cls := "root-link", c.wiki.name + " Root")
     case a: Attachment => span(cls := "attachment-link", a.file.getName)
@@ -114,9 +119,5 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
     case f: Folder => span(cls := "folder-link", f.file.getName)
     case c => c.relativeUrl
   }
-
-  private def toBreadCrumbs(content: Content) : List[Content] =
-    if (Content.isRoot(content)) List(content)
-    else toBreadCrumbs(content.parent) ++ List(content)
 
 }

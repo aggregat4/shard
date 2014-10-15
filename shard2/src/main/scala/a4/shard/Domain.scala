@@ -37,6 +37,10 @@ object Content {
     }
   }
 
+  // TODO: consider whether this is the correct location for this? where should routing info be? higher up, closer to the routing itself?
+  def toLink(content: Content): String = {
+    "/wiki/" + content.wiki.id + "/page/" + content.relativeUrl
+  }
 }
 
 trait Content {

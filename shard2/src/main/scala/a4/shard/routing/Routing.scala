@@ -30,11 +30,20 @@ object Method {
   }
 }
 
+trait Part {
+  def inputStream : InputStream
+  def contentType : String
+  def name : String
+  def size : Long
+  // a Part can also have headers, haven't mapped that yet
+}
+
 trait Request {
   def method: Method
   def pathUrl: String
   def params: Map[String, List[String]]  
   def withPathParams(urlParams: Map[String, List[String]]) : Request
+  def formData : List[Part] = List()
 }
 
 object Request {
@@ -44,47 +53,68 @@ object Request {
   }
 }
 
+
 /**
  * Current design decision is to provide my own Request type but at the moment to just wrap the 
  * original HttpServletRequest and dispatch all calls. I am probably going to need a bunch of 
  * the stuff in HttpServletRequest at the end but for now it seems weird leaving raw Java 
  * classes in the API.
  */
-class ServletRequest(val originalRequest: HttpServletRequest, val urlParams: Map[String, List[String]] = Map()) extends Request {  
+
+class ServletPart(val originalPart: javax.servlet.http.Part) extends Part {
+  def inputStream = originalPart.getInputStream
+  def contentType = originalPart.getContentType
+  def name = originalPart.getName
+  def size = originalPart.getSize
+}
+
+class ServletRequest(val originalRequest: HttpServletRequest, val urlParams: Map[String, List[String]] = Map()) extends Request {
   import scala.collection.JavaConversions._
   implicit def convert(javaMap: java.util.Map[String, Array[String]]) = javaMap.entrySet.map(entry => (entry.getKey, entry.getValue.toList)).toMap
   
-  lazy val params : Map[String, List[String]] = originalRequest.getParameterMap() ++ urlParams
-  override def method = Method.from(originalRequest.getMethod())
+  lazy val params : Map[String, List[String]] = originalRequest.getParameterMap ++ urlParams
+  override def method = Method.from(originalRequest.getMethod)
   override def pathUrl = originalRequest.getPathInfo + (if (originalRequest.getQueryString == null) "" else "?" + originalRequest.getQueryString)
   override def withPathParams(urlParams: Map[String, List[String]]) : Request = new ServletRequest(originalRequest, urlParams)
+  override lazy val formData : List[Part] = originalRequest.getParts.map(p => new ServletPart(p)).toList
 }
 
-case class Status(val value: Int)
+case class Status(value: Int)
 
 object Status {
   def Ok = Status(200)
+  def SeeOther = Status(303)
+  def BadRequest = Status(400)
   def NotFound = Status(404)
   def Error = Status(500)
 }
+
+case class Header(name: String, value: String)
 
 trait Response {
   def status : Status
   def body : InputStream
   def contentType : Option[MediaType]
+  def headers : List[Header] = List()
 }
 
-case class EmptyResponse(val status: Status, val contentType: Option[MediaType] = None) extends Response {
+case class EmptyResponse(status: Status, contentType: Option[MediaType] = None) extends Response {
   lazy val body = new ByteArrayInputStream(Array[Byte]())
 }
 
-case class StringResponse(val status: Status, val stringBody: String, val contentType: Option[MediaType] = None) extends Response {
+case class RedirectResponse(status: Status, location: String) extends Response {
+  lazy val body = new ByteArrayInputStream(Array[Byte]())
+  override val contentType = None
+  override val headers = List(Header("Location", location))
+}
+
+case class StringResponse(status: Status, stringBody: String, contentType: Option[MediaType] = None) extends Response {
   lazy val body = new ByteArrayInputStream(stringBody.getBytes("UTF-8"))
 }
 
-case class InputStreamResponse(val status: Status, val body: InputStream, val contentType: Option[MediaType] = None) extends Response
+case class InputStreamResponse(status: Status, body: InputStream, contentType: Option[MediaType] = None) extends Response
 
-case class Route(val path: Path, val method: Method, val action: Action) {
+case class Route(path: Path, method: Method, action: Action) {
   
   def accepts(request: Request) : Boolean = request.method == method && path.matches(request.pathUrl)
 
@@ -98,7 +128,7 @@ case class Route(val path: Path, val method: Method, val action: Action) {
     ))
 }
 
-case class Path(val path: String) {
+case class Path(path: String) {
   private val variableRegexPattern = "\\{([a-zA-Z]+)\\}" 
   // Note that for the actual variable *values* we also match on forward slashes, this means that
   // URL variables can also be path fragments, e.g. "foo/bar/baz", we match on periods since they can occur in filenames
@@ -122,6 +152,6 @@ case class Path(val path: String) {
   def routes(actions: (Method, Action)*) : List[Route] = actions.map { action: (Method, Action) => Route(this, action._1, action._2) }.toList
 }
 
-case class Router(val routes: List[Route]) {
+case class Router(routes: List[Route]) {
   def findRoute(request: Request) = routes.find(r => r.accepts(request))
 }

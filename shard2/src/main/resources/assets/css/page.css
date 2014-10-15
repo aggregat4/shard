@@ -1,6 +1,11 @@
 article {
-    height: calc(100% - 110px); /* total body height minus header and footer (note that those containers should not have padding by themselves */
+    min-height: calc(100% - 110px); /* total body height minus header and footer (note that those containers should not have padding by themselves */
     padding: 0;
+}
+
+.page-content {
+    min-height: calc(100%);
+    margin: 0 10px 0 10px;
 }
 
 .page-editor {

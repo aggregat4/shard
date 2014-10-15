@@ -1,6 +1,6 @@
 package a4.util
 
-import java.io.{InputStream, OutputStream}
+import java.io.{File, FileOutputStream, InputStream, OutputStream}
 
 object StreamUtil {
 
@@ -18,7 +18,15 @@ object StreamUtil {
   def copy(is: InputStream, os: OutputStream) : Unit = {
     consume(is, (buf, read) => os.write(buf, 0, read))
   }
-  
+
+  def copy(is: InputStream, file: File) : Unit = {
+    import resource._
+    for (fos <- managed(new FileOutputStream(file))) {
+      copy(is, fos)
+    }
+  }
+
+
   def toString(is: InputStream, encoding: String) : String = {
     val sb = new StringBuilder()
     consume(is, (buf, read) => sb.append(new String(buf, 0, read, encoding)))
