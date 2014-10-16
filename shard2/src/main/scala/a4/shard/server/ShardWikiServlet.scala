@@ -9,6 +9,14 @@ import a4.util.StreamUtil
 case class ShardWikiServlet(router: Router) extends HttpServlet {
 
   override def doGet(httpRequest: HttpServletRequest, httpResponse: HttpServletResponse) : Unit = {
+    handle(httpRequest, httpResponse)
+  }
+
+  override def doPost(httpRequest: HttpServletRequest, httpResponse: HttpServletResponse) : Unit = {
+    handle(httpRequest, httpResponse)
+  }
+
+  private def handle(httpRequest: HttpServletRequest, httpResponse: HttpServletResponse) : Unit = {
     val request = new ServletRequest(httpRequest)
     val response = router.findRoute(request) match {
       case Some(r: Route) => r.service(request)

@@ -11,7 +11,6 @@ import a4.util.StreamUtil
 import com.google.common.net.MediaType
 
 case class PageController(config: Configuration, contentRenderer: ContentRenderer) {
-  
   // TODO: do special handling for runtimeexceptions on processing the content? In case of non-transformable, just show the quoted/escaped raw source?
   def view(req: Request): Response = getPage(req) match {
     case Some(page) if page.isInstanceOf[Folder] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Folder]), Some(MediaType.HTML_UTF_8))
@@ -47,5 +46,4 @@ case class PageController(config: Configuration, contentRenderer: ContentRendere
     case Some(part) => Some(part.inputStream)
     case None => None
   }
-
 }

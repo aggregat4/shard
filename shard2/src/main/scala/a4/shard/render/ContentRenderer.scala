@@ -25,7 +25,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
         renderHead("Folder FIXME"),
         body(
           renderHeader(Some(folder.wiki), folder, folder),
-          tags2.article(),
+          tags2.article(h1("This is a Folder, fill me with a context page!")),
           renderFooter())))
 
   override def render(page: Page) : InputStream =
@@ -38,7 +38,11 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
             div(cls := "page-content",
               button(cls := "edit", "Edit"),
               raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
-            div(cls := "page-editor", textarea(FileUtil.readAsUtf8(page.file)))),
+            div(cls := "page-editor",
+              form(id := "page-editor-form", method := "POST", action := Content.toLink(page), "enctype".attr := "multipart/form-data",
+                textarea(name := "newContent", FileUtil.readAsUtf8(page.file)),
+                input(`type` := "submit", "Save")
+              ))),
           renderFooter())))
 
   override def renderRoot(wikis: List[Wiki]): InputStream =

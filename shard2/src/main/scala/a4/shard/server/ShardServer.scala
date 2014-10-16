@@ -1,5 +1,7 @@
 package a4.shard.server
 
+import javax.servlet.MultipartConfigElement
+
 import a4.shard.Configuration
 import a4.shard.controller.{AssetController, PageController, RootController}
 import a4.shard.render.CodeContentRenderer
@@ -8,13 +10,8 @@ import a4.shard.transforming.MarkdownTransformer
 import a4.util.ClasspathAssetResolver
 import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.{ServletHandler, ServletHolder}
+import org.eclipse.jetty.servlet.{ServletContextHandler, ServletHolder}
 
-/**
- * TODO: 
- * - once implementing some real "controllers" we'll need parameter conversion (where to model these utilities?) and we'll need some kind of error
- *   handling, possibly as a cross cutting concern, possibly something like filters?
- */
 object ShardServer {
 
   def main(args: Array[String]) : Unit = {
@@ -40,12 +37,13 @@ object ShardServer {
     )
     // Server infrastructure
     val shardWikiServlet = ShardWikiServlet(router)
-    val server = new Server(8080)
-    val servletHandler = new ServletHandler()
     val servletHolder = new ServletHolder(shardWikiServlet)
-    servletHolder.setInitParameter("cacheControl","no-cache")
-    servletHandler.addServletWithMapping(servletHolder, "/*")
-    server.setHandler(servletHandler)
+    servletHolder.setInitParameter("cacheControl", "no-cache")
+    servletHolder.getRegistration.setMultipartConfig(new MultipartConfigElement(System.getProperty("java.io.tmpdir")))
+    val servletContextHandler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS | ServletContextHandler.NO_SECURITY)
+    servletContextHandler.addServlet(servletHolder, "/*")
+    val server = new Server(8080)
+    server.setHandler(servletContextHandler)
     server.start()
   }
   
