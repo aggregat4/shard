@@ -20,4 +20,16 @@ window.on("load", function() {
             $("button.edit").style.display = "none";
         });
     }
+
+    var pagePreview = $(".page-preview");
+    var pageEditor= $(".page-editor-textarea");
+    if (pagePreview && pageEditor) {
+        var updatePreview = function (event) {
+            pagePreview.innerHTML = marked(pageEditor.value);
+        };
+        pageEditor.on("keyup", updatePreview);
+        pageEditor.on("change", updatePreview);
+        pageEditor.on("paste", updatePreview);
+        pageEditor.on("cut", updatePreview);
+    }
 })

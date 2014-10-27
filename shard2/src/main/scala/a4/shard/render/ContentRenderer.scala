@@ -40,9 +40,10 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
               raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
             div(cls := "page-editor",
               form(id := "page-editor-form", method := "POST", action := Content.toLink(page), "enctype".attr := "multipart/form-data",
-                textarea(name := "newContent", FileUtil.readAsUtf8(page.file)),
+                textarea(cls := "page-editor-textarea", name := "newContent", FileUtil.readAsUtf8(page.file)),
                 input(`type` := "submit", "Save")
-              ))),
+              )),
+            div(cls := "page-preview")),
           renderFooter())))
 
   override def renderRoot(wikis: List[Wiki]): InputStream =
@@ -103,7 +104,8 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
     footer(
       i("This page produced by Shard."),
       script(src := "/js/mega.js"),
-      script(src := "/js/main.js"))
+      script(src := "/js/main.js"),
+      script(src := "/js/marked.js"))
 
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString).getBytes(Charset.forName("UTF-8")))
