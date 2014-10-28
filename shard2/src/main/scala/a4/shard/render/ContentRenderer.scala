@@ -36,12 +36,12 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
           renderHeader(Some(page.wiki), page, page.parent),
           tags2.article(
             div(cls := "page-content",
-              button(cls := "edit", "Edit"),
+              a(cls := "edit", "accesskey".attr := "e", href := "#", "Edit"),
               raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
             div(cls := "page-editor",
               form(id := "page-editor-form", method := "POST", action := Content.toLink(page), "enctype".attr := "multipart/form-data",
                 textarea(cls := "page-editor-textarea", name := "newContent", FileUtil.readAsUtf8(page.file)),
-                input(`type` := "submit", "Save")
+                input(`type` := "submit", value := "Save")
               )),
             div(cls := "page-preview")),
           renderFooter())))
@@ -103,6 +103,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
   private def renderFooter() : Modifier =
     footer(
       i("This page produced by Shard."),
+      script(src := "/js/aslovok.js"),
       script(src := "/js/mega.js"),
       script(src := "/js/main.js"),
       script(src := "/js/marked.js"))

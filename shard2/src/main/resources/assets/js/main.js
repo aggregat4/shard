@@ -11,22 +11,26 @@ window.on("load", function() {
         });
     }
 
-    var editButton = $("button.edit");
+    var immediateUpdatePreview = function (event) {
+        pagePreview.innerHTML = marked(pageEditor.value);
+    };
+    var updatePreview = aslovok.debounce(immediateUpdatePreview, 500, false);
+
+    var editButton = $("a.edit");
     if (editButton) {
         editButton.on("click", function() {
             $(".page-content").style.display = "none";
             $(".page-editor").style.display = "block";
+            $(".page-preview").style.display = "block";
             $("button.edit").disabled = true;
             $("button.edit").style.display = "none";
+            immediateUpdatePreview();
         });
     }
 
     var pagePreview = $(".page-preview");
     var pageEditor= $(".page-editor-textarea");
     if (pagePreview && pageEditor) {
-        var updatePreview = function (event) {
-            pagePreview.innerHTML = marked(pageEditor.value);
-        };
         pageEditor.on("keyup", updatePreview);
         pageEditor.on("change", updatePreview);
         pageEditor.on("paste", updatePreview);
