@@ -37,7 +37,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
           tags2.article(
             div(cls := "page-content",
               a(cls := "edit", "accesskey".attr := "e", href := "#", "Edit"),
-              raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file)))),
+              div(raw(contentTransformer.transform(page, FileUtil.readAsUtf8(page.file))))),
             div(cls := "page-editor",
               form(id := "page-editor-form", method := "POST", action := Content.toLink(page), "enctype".attr := "multipart/form-data",
                 textarea(cls := "page-editor-textarea", name := "newContent", FileUtil.readAsUtf8(page.file)),

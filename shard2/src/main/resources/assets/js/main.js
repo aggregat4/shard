@@ -16,6 +16,7 @@ window.on("load", function() {
     };
     var updatePreview = aslovok.debounce(immediateUpdatePreview, 500, false);
 
+    // TODO figure out how to trigger editing with accesskey as well
     var editButton = $("a.edit");
     if (editButton) {
         editButton.on("click", function() {
