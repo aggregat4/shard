@@ -106,7 +106,8 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
       script(src := "/js/aslovok.js"),
       script(src := "/js/mega.js"),
       script(src := "/js/main.js"),
-      script(src := "/js/marked.js"))
+      script(src := "/js/marked.js"),
+      script(src := "/js/velocity.js"))
 
   private def toInputStream(root: Modifier) : InputStream =
     new ByteArrayInputStream((DOCTYPE + root.toString).getBytes(Charset.forName("UTF-8")))

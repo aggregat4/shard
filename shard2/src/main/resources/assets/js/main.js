@@ -12,7 +12,7 @@ window.on("load", function() {
     }
 
     var immediateUpdatePreview = function (event) {
-        pagePreview.innerHTML = marked(pageEditor.value);
+        pagePreview.innerHTML = "<div class=\"page-preview-top\"></div>" + marked(pageEditor.value);
     };
     var updatePreview = aslovok.debounce(immediateUpdatePreview, 500, false);
 
@@ -23,8 +23,8 @@ window.on("load", function() {
             $(".page-content").style.display = "none";
             $(".page-editor").style.display = "block";
             $(".page-preview").style.display = "block";
-            $("button.edit").disabled = true;
-            $("button.edit").style.display = "none";
+            editButton.disabled = true;
+            editButton.style.display = "none";
             immediateUpdatePreview();
         });
     }
@@ -36,5 +36,24 @@ window.on("load", function() {
         pageEditor.on("change", updatePreview);
         pageEditor.on("paste", updatePreview);
         pageEditor.on("cut", updatePreview);
+        pageEditor.on("scroll", aslovok.debounce(function () {
+            var editorScrollRange = pageEditor.scrollHeight - pageEditor.clientHeight;
+            var previewScrollRange = pagePreview.scrollHeight - pagePreview.clientHeight;
+            // Find how far along the editor is (0 means it is scrolled to the top, 1
+            // means it is at the bottom).
+            var scrollFactor = pageEditor.scrollTop / editorScrollRange;
+            // Set the scroll position of the preview pane to match.  jQuery will
+            // gracefully handle out-of-bounds values.
+
+            var newScrollPosition = Math.min(scrollFactor * previewScrollRange, pagePreview.scrollHeight);
+            //pagePreview.scrollTop = newScrollPosition;
+            var pagePreviewTop = $(".page-preview-top");
+            Velocity(pagePreviewTop, "scroll", {
+                container: pagePreview,
+                offset: newScrollPosition,
+                duration: 1000,
+                easing: "easeInOutCubic" });
+        }, 200, false));
     }
+
 })
