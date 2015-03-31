@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: eu.henkelmann:actuarius_2.10.0:0.2.6:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/eu.henkelmann/actuarius_2.10.0/jars/actuarius_2.10.0-0.2.6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/eu.henkelmann/actuarius_2.10.0/docs/actuarius_2.10.0-0.2.6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/eu.henkelmann/actuarius_2.10.0/srcs/actuarius_2.10.0-0.2.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

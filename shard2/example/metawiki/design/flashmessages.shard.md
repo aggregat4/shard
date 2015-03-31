@@ -5,3 +5,4 @@ of the message. We avoid any DoS this way and clean everything up.
 
 This all assumes that our application is "single" user, i.e. we do not associate any
 client-identity to the requests. Is this reasonable?
+

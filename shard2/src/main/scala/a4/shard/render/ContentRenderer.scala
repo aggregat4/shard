@@ -10,11 +10,18 @@ import a4.util.FileUtil
 import scalatags.Text.all._
 import scalatags.Text.tags2
 
+/**
+ * TODO Alternative structure:
+ * - have an Object that acts as a factory and creates an appropriate renderer based on the type (i.e. getRenderer(page: Page) : PageRenderer, etc)
+ * - have a hierarchy of Renderers with a ContentRenderer trait with one method (render : InputStream), a base class with utility methods  (e.g. renderHeader) and specific child classes for the different types. This may make code organization cleaner?
+ * That would probably be cleaner since we already have a zoo of methods in the ContentRenderer trait now
+ */
 trait ContentRenderer {
   def render(folder: Folder) : InputStream
   def render(page: Page) : InputStream
   def render(attachment: Attachment) : InputStream = new FileInputStream(attachment.file)
   def renderRoot(wikis: List[Wiki]) : InputStream
+  def render(searchResults: SearchResults) : InputStream
 }
 
 class CodeContentRenderer(contentTransformer: PageContentTransformer) extends ContentRenderer {
@@ -57,7 +64,22 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
           tags2.article(
             h1("Shard"),
             p("You have the following wikis configured:"),
-            ul(wikis.map(w => a(href := "wiki/" + w.id)(w.name)))),
+            ul(wikis.map(w => li(a(href := "wiki/" + w.id)(w.name))))),
+          renderFooter())))
+
+
+  override def render(searchResults: SearchResults) : InputStream =
+    toInputStream(
+      html(
+        renderHead("Search Results for '" + searchResults.query + "'"),
+        body(
+          header(
+            tags2.nav(
+              a(href := "/")("Home"))),
+          tags2.article(
+            h1("Search Results for '" + searchResults.query + "'"),
+            ol(
+              searchResults.results.map(sr => li(toWikiPageLink(sr.content))))),
           renderFooter())))
 
   private val DOCTYPE: String = "<!DOCTYPE html>"
@@ -91,6 +113,10 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
       tags2.nav(
         a(cls := "allwikis", href := "/")("All Wikis"),
         ol(cls := "breadcrumbs", toBreadCrumbs(wikiPage).map(c => li(toWikiPageLink(c)))),
+        form(cls := "search", method := "GET", action := "/search",
+          input(`type` := "text", name := "q"),
+          input(`type` := "submit", value := "Search")
+        ),
         button(cls := "context", "Context"),
         div(cls :=  "contextPopup")(
           (renderContentList("Pages", contextFolder.pages) ++
@@ -127,5 +153,7 @@ class CodeContentRenderer(contentTransformer: PageContentTransformer) extends Co
     case f: Folder => span(cls := "folder-link", f.file.getName)
     case c => c.relativeUrl
   }
+
+
 
 }

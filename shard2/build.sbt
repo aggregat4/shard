@@ -29,6 +29,8 @@ libraryDependencies += "com.jsuereth" % "scala-arm_2.10" % "1.3"
 
 libraryDependencies += "com.scalatags" % "scalatags_2.10" % "0.4.2"
 
+libraryDependencies += "org.elasticsearch" % "elasticsearch" % "1.3.4"
+
 // ---- TEST
 libraryDependencies += "junit" % "junit" % "4.10" % "test"
 

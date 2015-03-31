@@ -37,6 +37,8 @@ object Content {
     }
   }
 
+  def getRootFolder(wiki: Wiki) : Folder = Folder(wiki, wiki.location)
+
   // TODO: consider whether this is the correct location for this? where should routing info be? higher up, closer to the routing itself?
   def toLink(content: Content): String = {
     "/wiki/" + content.wiki.id + "/page/" + content.relativeUrl

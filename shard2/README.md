@@ -1,16 +1,15 @@
-  TODO: make this documentation self hosting, start a design wiki in src/test/resources or something, can try out the 
-
 # Dependencies
 - -[Scalatest](http://www.scalatest.org/) and the [FunSuite](http://www.scalatest.org/getting_started_with_fun_suite)-
--- using JUnit with FEST
+-- nope, using JUnit with FEST, I found it easier to get started
 - [JGit](http://eclipse.org/jgit/)
 - [JNotify](http://jnotify.sourceforge.net/)
 - -[Scalatra](https://github.com/scalatra/scalatra) (or rather Finagle?)-
--- Using Spray
---- nope, using home brew
+-- -nope, Using Spray-
+--- nope, using home brew solution, Spray DSl was horrible to use at the time
 - -[Scalate Jade](http://scalate.fusesource.org/documentation/jade.html)-
--- Using Scalate Moustache
---- nope, using mustache-java
+-- -Using Scalate Moustache-
+--- -nope, using mustache-java-
+---- nope, using Scalatags, scala based library for code-based templating.
 - [TypeSafe Config](https://github.com/typesafehub/config)
 
 # What it is
