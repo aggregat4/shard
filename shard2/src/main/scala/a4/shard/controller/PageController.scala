@@ -10,12 +10,12 @@ import a4.shard.routing._
 import a4.util.StreamUtil
 import com.google.common.net.MediaType
 
-case class PageController(config: Configuration, contentRenderer: ContentRenderer) {
+case class PageController(config: Configuration, pageRenderer: PageRenderer, folderRenderer: FolderRenderer, attachmentRenderer: AttachmentRenderer) {
   // TODO: do special handling for runtimeexceptions on processing the content? In case of non-transformable, just show the quoted/escaped raw source?
   def view(req: Request): Response = getPage(req) match {
-    case Some(page) if page.isInstanceOf[Folder] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Folder]), Some(MediaType.HTML_UTF_8))
-    case Some(page) if page.isInstanceOf[Page] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Page]), Some(MediaType.HTML_UTF_8))
-    case Some(page) if page.isInstanceOf[Attachment] => InputStreamResponse(Ok, contentRenderer.render(page.asInstanceOf[Attachment]), Some(MediaType.parse(Files.probeContentType(page.file.toPath))))
+    case Some(page) if page.isInstanceOf[Folder] => InputStreamResponse(Ok, folderRenderer.render(page.asInstanceOf[Folder]), Some(MediaType.HTML_UTF_8))
+    case Some(page) if page.isInstanceOf[Page] => InputStreamResponse(Ok, pageRenderer.render(page.asInstanceOf[Page]), Some(MediaType.HTML_UTF_8))
+    case Some(page) if page.isInstanceOf[Attachment] => InputStreamResponse(Ok, attachmentRenderer.render(page.asInstanceOf[Attachment]), Some(MediaType.parse(Files.probeContentType(page.file.toPath))))
     case _ => EmptyResponse(NotFound) // TODO: this not found can only mean that we can't find the actual WIKI, all other cases should theoretically be handled by the fallback logic in getPage(), so this means that in this case we should default to the root of all Wikis and show a flash message that we didn't find the wiki (possibly offer to create it?
   }
 

@@ -4,7 +4,7 @@ import javax.servlet.MultipartConfigElement
 
 import a4.shard.Configuration
 import a4.shard.controller._
-import a4.shard.render.CodeContentRenderer
+import a4.shard.render._
 import a4.shard.routing.{GET, POST, Path, Router}
 import a4.shard.search.{ElasticSearchFullTextIndex, SearchService}
 import a4.shard.transforming.MarkdownTransformer
@@ -21,14 +21,19 @@ object ShardServer {
     val config = Configuration(appConfig)
     val assetResolver = ClasspathAssetResolver("assets")
     val contentTransformer = MarkdownTransformer()
-    val contentRenderer = new CodeContentRenderer(contentTransformer)
     val searchService = new SearchService(config, new ElasticSearchFullTextIndex())
+    // these renderers could also just be static calls on an Object, only if the lifecycle is important (caching?) would this approach maybe make sense
+    val pageRenderer = new PageRenderer(contentTransformer)
+    val attachmentRenderer = new AttachmentRenderer()
+    val folderRenderer = new FolderRenderer()
+    val rootRenderer = new RootRenderer()
+    val searchResultsRenderer = new SearchResultsRenderer()
     // Controllers
     val assetController = AssetController(config, assetResolver)
-    val rootController = RootController(config, contentRenderer)
-    val pageController = PageController(config, contentRenderer)
-    val searchController = SearchController(config, searchService, contentRenderer)
-    val notFoundController = NotFoundController(config, contentRenderer)
+    val rootController = RootController(config, rootRenderer)
+    val pageController = PageController(config, pageRenderer, folderRenderer, attachmentRenderer)
+    val searchController = SearchController(config, searchService, searchResultsRenderer)
+    val notFoundController = NotFoundController(config)
     // Router
     val router = Router(
       Path("/").routes((GET, rootController.apply)) :::
