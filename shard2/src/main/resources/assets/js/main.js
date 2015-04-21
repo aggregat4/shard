@@ -21,6 +21,7 @@ window.on("load", function() {
     if (editButton) {
         editButton.on("click", function() {
             $(".page-content").style.display = "none";
+            $(".page-content-editing").style.display = "block";
             $(".page-editor").style.display = "block";
             $(".page-preview").style.display = "block";
             editButton.disabled = true;

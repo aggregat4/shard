@@ -10,8 +10,27 @@ body {
     font-size: 16px;
     padding: 0;
     margin: 0;
+    /* as per http://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
+    box-sizing: border-box;
+    background: white;
+}
+
+/* as per http://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 .clearer {
     clear: both;
+}
+
+article {
+    /* total body height minus header and footer (note that those containers should not have padding by themselves */
+    /* TODO: This works in edit mode: this makes the footer jump down neatly below the edit panes
+       however in view mode, the article may contain paragraphs and headers that have margin at the bottom and the
+       top. This margin does not count towards the size of the content but does add whitespace, this causes the footer
+       drop below the bottom of the screen when the content does not fill the screen. We probably need some conditional
+       css here based on whether we are editing the article or not. */
+    min-height: calc(100% - 75px);
+    padding: 0;
 }

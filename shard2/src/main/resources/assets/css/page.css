@@ -1,31 +1,37 @@
-article {
-    min-height: calc(100% - 75px); /* total body height minus header and footer (note that those containers should not have padding by themselves */
-    padding: 0;
-}
-
 .page-content {
     min-height: calc(100%);
-    margin: 0 10px 0 10px;
+    margin: 10px 10px 10px 10px;
+}
+
+.page-content-editing {
+    position: absolute;
+    top: 45px;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    display: none;
 }
 
 .page-editor {
     position: absolute;
-    top: 45px;
+    top: 10px;
     left: 10px;
     right: 50%;
-    bottom: 30px;
+    bottom: 10px;
     display: none;
     overflow: auto;
 }
 
 .page-preview {
     position: absolute;
-    top: 45px;
+    top: 10px;
     left: 50%;
     right: 10px;
-    bottom: 30px;
+    bottom: 40px;
     display: none;
     overflow: auto;
+    padding: 10px;
+    border: 1px #dddddd solid;
 }
 
 .page-editor form {
@@ -37,12 +43,14 @@ article {
 .page-editor textarea {
     /*width: calc(100% - 30px);*/
     /*height: calc(100% - 30px);*/
-    height: calc(100% - 60px);
-    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+    width: calc(100% );
     padding: 10px;
     font-size: 15px;
     font-family: Consolas, monospace;
+    line-height: 1.5;
     resize: none;
+    border: 1px #dddddd solid;
 }
 
 .save-edit {
