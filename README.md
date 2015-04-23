@@ -43,7 +43,7 @@ end they are just files.
 You run Shard by running the a4.shard.server.ShardServer class. It is mostly self-contained but requires a configuration
 with references to some actual "wikis" (directories) to be useful. An example wiki is provided under /example, and its
 path is relatively referenced. If you start ShardServer with the project directory as the working directory then it can
-be read.
+be read. After it started successfully you can access Shard on http://localhost:8080.
 
 # Open Issues
 
