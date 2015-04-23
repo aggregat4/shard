@@ -1,4 +1,4 @@
-# TODO List for Shard Wiki ✓
+# TODO List for Shard Wiki
 
 ## Sooner
 1. ☑ have a static asset renderer on some paths  (css/img/js or rather on "static" as an intermediate path?) that just feeds the files (some caching headers?)
@@ -19,6 +19,7 @@
 1. ☑ make the folder template (three columns: wiki pages, other files, directories)
 1. ☐ allow adding new pages from the wiki: with a toolbar button and make links to non-existing pages open in the editor
 1. ☐ write some rudimentary documentation, clean up project (shard/shard2, remove IDEA files?) and push to GitHub (backup!)
+1. ☐ replace Elasticsearch with plain lucene, it is overklill for this project and muddies it up. The simple example from the lucene docs seems to show most needed functionality
 1. ☐ wiki is a git repository: auto init, auto recognize, auto add files, show status in pages, conflicts?
 1. ☐ make it prett(y)(ier)
 1. ☐ autoindexing (notice new files not created in the application, while it is running) for full text search (we already update the index at startup)
