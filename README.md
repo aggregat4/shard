@@ -9,7 +9,9 @@ As I have been dabbling in Scala for a while, and wanting to gather more experie
 tackle a "real" project, scratch a personal itch and do something bigger with the language. Shard is a first attempt
 at tackling some ideas I had about wikis and managing information and it seemed like an ideal project to start with.
 
-As this is a learning project for a programming language, I didn't want to get bogged down in learning frameworks and
+Shard is a web-based wiki, written in Scala.
+
+As started as a learning project for a programming language, I didn't want to get bogged down in learning frameworks and
 fiddling with configuration. Easy bootstrapping is paramount and less black boxes help intensely. This doesn't mean that
 I reimplemented everything myself (see the Dependencies section below) but it does mean that Shard contains a tiny
 homebrew "web framework". Yes, I know. Learning, remember.
@@ -18,7 +20,7 @@ This has some further design effects:
 - I am postponing any kind of Javascript framework for as long as possible, I'd rather it be clear. The only concession
   is mega.js, but that isn't a framework.
 - I am not using any existing web framework
-- I am not using any existing DI framework, the injection happens in main
+- I am not using any existing DI framework, the "injection" happens in main
 
 As I write Shard, I am starting to realize that the actual product I want for information management isn't quite this
 thing but something similar. I will try to finish some core features in Shard, but may move onto Shard 2 at some point.
@@ -38,12 +40,14 @@ files outside of Shard. This should not bother Shard, it should always try to de
 end they are just files.
 - Good search: full text search that is fast, up to date and accurate is essential.
 
+I currently develop this thing in Intellij Idea since it has rather good Scala support, but it isn't required.
+
 # Running Shard
 
 You run Shard by running the a4.shard.server.ShardServer class. It is mostly self-contained but requires a configuration
 with references to some actual "wikis" (directories) to be useful. An example wiki is provided under /example, and its
 path is relatively referenced. If you start ShardServer with the project directory as the working directory then it can
-be read. After it started successfully you can access Shard on http://localhost:8080.
+be read. After it started successfully you can access Shard on [http://localhost:8080](http://localhost:8080).
 
 # Open Issues
 
@@ -71,7 +75,7 @@ historic interest, or serve as a warning to future readers:
 
 # What Shard will be
 These were my original ideas, before starting the project about what I wanted to accomplish. This may no longer be the
-actual state of the project. I will add a "What Shard currently is" section later on:
+actual state of the project or what I want to accomplish. I will add a "What Shard currently is" section later on:
 - a shard repository is a directory
 - a shard repository is a git   repository
 - multiple repositories can be managed
