@@ -17,6 +17,7 @@
 1. ☑ side by side live editing of markdown: edit in textarea on the left, have auto-refresh on the right, with scrolling to position. [Synchronized scrolling approach with percentage based scrolling](https://github.com/anru/rsted/blob/master/static/scripts/editor.js) see "syncScrollPosition", it uses the jquery scroll binding which I think mega.js should allow as well, probably also should debounce it.
 1. ☑ full text search with elasticsearch
 1. ☑ make the folder template (three columns: wiki pages, other files, directories)
+1. ☐ move the thirdparty Javascript to a vendor directory
 1. ☐ allow adding new pages from the wiki: with a toolbar button and make links to non-existing pages open in the editor
 1. ☐ write some rudimentary documentation, clean up project (shard/shard2, remove IDEA files?) and push to GitHub (backup!)
 1. ☐ replace Elasticsearch with plain lucene, it is overklill for this project and muddies it up. The simple example from the lucene docs seems to show most needed functionality
@@ -26,9 +27,15 @@
 1. ☐ access-keys for keyboard shortcuts (e for edit most important)
 1. ☐ implement flash messages, check the todos and use them where required (mostly in navigation fallbacks for now)
 1. ☐ Add feature to allow insertion of a table of contents: some metasyntactic character combination and some logic in the markdown renderer to extract a TOC
-1. ☐ consider doing client side Markdown rendering only: at the moment there are 2 renderers at work. Once on the server with arctuarius for the page view and then while live editing with marked.js. Perhaps we should just always render the "preview" and just hide the textarea in cases where we just view the page
 1. ☐ consider using the ["Ace" editor](http://ace.c9.io/#nav=higlighter) (uses contentEditable DIVs and has syntax highlighting). It is used by [Dillinger](http://dillinger.io/), StackEdit and IO9
 
 ## Later
 1. ☐ Link to pages in other wikis (really? do we need this?)
 1. ☐ I may know what I really want: a workflowy/wiki hybrid: each "shard" is a tree, left side of screen is editing and moving around the tree (a la Workflowy), the right side is editing the "content" like a dedicated attachment that is basically markdown content, allow dual pane editing like now. Technical implementation: extract out the http library and other utilities in a separate project, finish up the current wiki until it works with search and some prototypical git integration. For the new project perhaps also file storage, flat format with one directory per node in the tree (gathers node title/summary, the "content" and the attachments), this is no longer just a robust layer on top of an existing directory layout that you can edit with other tools. On the other hand it is still just files on a disk and the structure is kept separately so it is very flexible and easy to edit, so massive advantage there. 
+
+## Discarded
+
+1. ~~consider doing client side Markdown rendering only: at the moment there are 2 renderers at work. Once on the server with arctuarius for the page view and then while live editing with marked.js. Perhaps we should just always render the "preview" and just hide the textarea in cases where we just view the page~~
+  - I think two renderers are fine, it is a valid design trade-off at the moment. The performance and simplicity gains from the
+    current approach beat the "elegance" of the one renderer from the other approach. Once a lot of custom syntax
+    would enter the picture this may change.
