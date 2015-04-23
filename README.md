@@ -11,7 +11,7 @@ at tackling some ideas I had about wikis and managing information and it seemed 
 
 As this is a learning project for a programming language, I didn't want to get bogged down in learning frameworks and
 fiddling with configuration. Easy bootstrapping is paramount and less black boxes help intensely. This doesn't mean that
-I reimplemented everyhting myself (see the Dependencies section below) but it does mean that Shard contains a tiny
+I reimplemented everything myself (see the Dependencies section below) but it does mean that Shard contains a tiny
 homebrew "web framework". Yes, I know. Learning, remember.
 
 As I write Shard, I am starting to realize that the actual product I want for information management isn't quite this
@@ -39,18 +39,18 @@ TODO
 # Dependencies, planned and current
 I retained some of the original choices and ideas I had in mind for some of the libraries I would need. They may be of
 historic interest, or serve as a warning to future readers:
-- Unit testing with -[Scalatest](http://www.scalatest.org/) and the [FunSuite](http://www.scalatest.org/getting_started_with_fun_suite)-
+- Unit testing with ~~[Scalatest](http://www.scalatest.org/) and the [FunSuite](http://www.scalatest.org/getting_started_with_fun_suite)~~
   - nope, using plain old JUnit with FEST, I found it easier to get started
 - Git integration with [JGit](http://eclipse.org/jgit/)
   - not yet
 - Getting file system notifications with [JNotify](http://jnotify.sourceforge.net/)
   - not yet
-- -[Scalatra](https://github.com/scalatra/scalatra) (or rather Finagle?)- as my tiny web framework
-  - -nope, Using Spray-
+- ~~[Scalatra](https://github.com/scalatra/scalatra) (or rather Finagle?)~~ as my tiny web framework
+  - ~~nope, Using Spray~~
     - nope, using a simple home brew solution, Spray DSl was horrible to use at the time, Scalatra seemed overkill
-- -[Scalate Jade](http://scalate.fusesource.org/documentation/jade.html)- as a template library
-  - -Using [Scalate Mustache](https://scalate.github.io/scalate/documentation/mustache.html#features)-
-    - -nope, using [Mustache-java](https://github.com/spullara/mustache.java)-
+- ~~[Scalate Jade](http://scalate.fusesource.org/documentation/jade.html)~~ as a template library
+  - ~~Using [Scalate Mustache](https://scalate.github.io/scalate/documentation/mustache.html#features)~~
+    - ~~nope, using [Mustache-java](https://github.com/spullara/mustache.java)~~
       - nope, using [Scalatags](https://github.com/lihaoyi/scalatags), scala based library for code-based templating
 - [TypeSafe Config](https://github.com/typesafehub/config) for configuration
 
@@ -86,19 +86,6 @@ There are some possibilities with designing a wiki as a set of files and directo
    and when it exists it is used to render the directory itself. 
 
 I opt for the third design. In both cases some thought needs to go into how we identify pages and refer to the from other pages. How to guarantee a unique name? I tend towards using the page's relative path in the hierarchy for this. This is naturally unique, but it is of course also subject to change. But since we need to deal with change anyhow with renames we need to implement replaces after renames.
-
-Wiki pages are explicitly not called ".shardwiki" so they are easily visible for editing.
-
-Wiki pages are Markdown or similar plain text markup. (syntax extensions? includes? constrain syntax? what? see offline wiki requirements in notes)
-example of file based syntax:
-	/home/boris/foowiki
-		shardwiki
-		attachment1.pdf
-		attachment2.png
-		myfirstrootchild/
-			shardwiki
-		mysecondrootchild/
-			shardwiki
 
 ## Configuration
 * shard server configuration is kept in an application.conf, HOCON notation based config file
