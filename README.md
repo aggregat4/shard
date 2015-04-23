@@ -36,9 +36,15 @@ end they are just files.
 
 TODO
 
+# Example Wiki
+
+TODO
+
 # Dependencies, planned and current
 I retained some of the original choices and ideas I had in mind for some of the libraries I would need. They may be of
 historic interest, or serve as a warning to future readers:
+- Scala (2.10 at the moment)
+- sbt for building
 - Unit testing with ~~[Scalatest](http://www.scalatest.org/) and the [FunSuite](http://www.scalatest.org/getting_started_with_fun_suite)~~
   - nope, using plain old JUnit with FEST, I found it easier to get started
 - Git integration with [JGit](http://eclipse.org/jgit/)
