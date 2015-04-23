@@ -79,6 +79,7 @@ actual state of the project. I will add a "What Shard currently is" section late
 # Shard Wiki design
 ## File and Directory Structure
 There are some possibilities with designing a wiki as a set of files and directories. Assuming there is a root directory with our repository then we can have 2 basic schemes (as far as I can see):
+
 1. Each page is a file called "<filename>.shardwiki" and all the page's attachments and its children are stored in a subdirectory called "<filename>/"
 2. The directory itself contains both the page and its attachments, child-pages are modeled as subdirectories. So we would have a "shardwiki" file (explicitly no specific filename, this is the convention), all attachments are parallell to it and child pages are under "<childpage>/" directories.
 3. Each ".shard.md" file is a wiki page, they can be named whatever but need to end in ".shard.md", 
