@@ -56,7 +56,7 @@ historic interest, or serve as a warning to future readers:
 
 # What Shard will be
 These were my original ideas, before starting the project about what I wanted to accomplish. This may no longer be the
-actual state of the project. I will at a "What Shard currently is" section later:
+actual state of the project. I will add a "What Shard currently is" section later on:
 - a shard repository is a directory
 - a shard repository is a git   repository
 - multiple repositories can be managed
